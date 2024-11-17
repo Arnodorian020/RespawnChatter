@@ -38,7 +38,8 @@ const PaginaMisResenas = () => {
         setLoading(true);
 
         // Llamada a la API con token y ID del usuario
-        const response = await fetch(`https://1734f9d0-6496-464a-9fb7-3a12c3763e6d.mock.pstmn.io?userId=${userId}`, {
+        const response = await fetch(`http://localhost:3000/reviews/user/${userId}`, {
+        
           headers: {
             Authorization: `Bearer ${token}`, // Enviar el token en el encabezado
           },
@@ -49,8 +50,11 @@ const PaginaMisResenas = () => {
         }
 
         const data = await response.json();
-        setReviews(data.ratings);
-        setOriginalReviews(data.ratings); // Guarda el orden original
+        
+        console.log(data);
+
+        setReviews(data);
+        setOriginalReviews(data); // Guarda el orden original
       } catch (error) {
         console.error("Error al llamar a la API:", error);
         setReviews([]);
@@ -131,7 +135,7 @@ const PaginaMisResenas = () => {
                   <h5 className="card-title">
                     Creada en: {review.game} ({review.year})
                   </h5>
-                  <p className="card-text">{review.comment}</p>
+                  <p className="card-text">{review.reviewText}</p>
                   <div className="mb-3">
                     <span className="text-warning">
                       {"★".repeat(review.rating)}

@@ -11,7 +11,7 @@ function App() {
   useEffect(() => {
     // Guardar el token temporalmente en localStorage
     const simulatedToken =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxMjM0NSIsInVzZXJuYW1lIjoidXN1YXJpb19wcnVlYmEiLCJleHAiOjE3MTg5MjgwMDB9.B7l5oFaI_7sL93AhIXNw7cAXcmlg6nYZC2tb4eiUda0";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzNhMjgwMDBmMDJkY2RlOGEwZDgxOTAiLCJ1c2VybmFtZSI6InVzdWFyaW8xIiwiZXhwIjoxNzE4OTI4MDAwfQ.4-BNS7iQ7gzAINVNVfut9JJBuCZzAIWJX0_WhhH3BtY";
     localStorage.setItem("authToken", simulatedToken);
   }, []);
 
