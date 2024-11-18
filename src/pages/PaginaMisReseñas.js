@@ -72,7 +72,7 @@ const PaginaMisResenas = () => {
     let sortedReviews;
 
     if (e.target.value === "recent") {
-      sortedReviews = [...reviews].sort((a, b) => new Date(b.year) - new Date(a.year));
+      sortedReviews = [...reviews].sort((a, b) => new Date(b.gameId.releaseYear) - new Date(a.gameId.releaseYear));
     } else if (e.target.value === "rating") {
       sortedReviews = [...reviews].sort((a, b) => b.rating - a.rating);
     } else if (e.target.value === "none") {
@@ -85,7 +85,7 @@ const PaginaMisResenas = () => {
   const handleDelete = async () => {
     try {
       setModalData({ ...modalData, show: false });
-      const response = await fetch(`https://your-api-endpoint/reviews/${modalData.reviewId}`, {
+      const response = await fetch(`http://localhost:3000/reviews/${modalData.reviewId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -94,13 +94,29 @@ const PaginaMisResenas = () => {
       if (!response.ok) {
         throw new Error("Error al eliminar la reseña");
       }
-      setReviews(reviews.filter((review) => review.id !== modalData.reviewId));
+      // Después de eliminar la reseña, recargar la lista de reseñas
+    const updatedReviewsResponse = await fetch(`http://localhost:3000/reviews/user/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!updatedReviewsResponse.ok) {
+      throw new Error("Error al obtener las reseñas actualizadas");
+    }
+
+    const updatedReviews = await updatedReviewsResponse.json();
+
+    console.log(updatedReviews);
+
+    setReviews(updatedReviews); // Actualiza la lista de reseñas con los datos actualizados
     } catch (error) {
       console.error("Error al eliminar la reseña:", error);
     }
   };
 
   const handleEdit = (id) => {
+    console.log(id);
     navigate(`/editarReseña/${id}`);
   };
 
@@ -133,7 +149,7 @@ const PaginaMisResenas = () => {
               <div className="card bg-dark text-white shadow-sm">
                 <div className="card-body">
                   <h5 className="card-title">
-                    Creada en: {review.game} ({review.year})
+                    Creada en: {review.gameId.title} ({review.gameId.releaseYear})
                   </h5>
                   <p className="card-text">{review.reviewText}</p>
                   <div className="mb-3">
@@ -145,14 +161,14 @@ const PaginaMisResenas = () => {
                   <div className="d-flex justify-content-between">
                     <button
                       className="btn btn-warning btn-sm"
-                      onClick={() => handleEdit(review.id)}
+                      onClick={() => handleEdit(review._id)}
                     >
                       Modificar
                     </button>
                     <button
                       className="btn btn-danger btn-sm"
                       onClick={() =>
-                        setModalData({ show: true, reviewId: review.id, action: "delete" })
+                        setModalData({ show: true, reviewId: review._id, action: "delete" })
                       }
                     >
                       Eliminar

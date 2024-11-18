@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import ConfirmModal from "../components/ConfirmModal";  // Asegúrate de importar el modal de confirmación
 
 const PaginaEditarResena = () => {
   const { reviewId } = useParams(); // Obtener el ID de la reseña desde la URL
   const [review, setReview] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updatedReview, setUpdatedReview] = useState({
-    comment: "",
+    reviewText: "",
     rating: 0,
   });
+  const [showModal, setShowModal] = useState(false); // Controla la visibilidad del modal
   const navigate = useNavigate();
 
   // Llama a la API para obtener la reseña
@@ -18,7 +20,7 @@ const PaginaEditarResena = () => {
       try {
         setLoading(true);
         const token = localStorage.getItem("authToken"); // Usar el token si es necesario
-        const response = await fetch(`https://1734f9d0-6496-464a-9fb7-3a12c3763e6d.mock.pstmn.io/${reviewId}`, {
+        const response = await fetch(`http://localhost:3000/reviews/${reviewId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -31,7 +33,7 @@ const PaginaEditarResena = () => {
         const data = await response.json();
         setReview(data); // Suponiendo que el API devuelve un objeto de reseña
         setUpdatedReview({
-          comment: data.comment,
+          reviewText: data.reviewText,
           rating: data.rating,
         });
       } catch (error) {
@@ -57,25 +59,37 @@ const PaginaEditarResena = () => {
   const handleConfirm = async () => {
     try {
       const token = localStorage.getItem("authToken");
-      const response = await fetch(`https://1734f9d0-6496-464a-9fb7-3a12c3763e6d.mock.pstmn.io/reviews/${reviewId}`, {
+      const response = await fetch(`http://localhost:3000/reviews/${reviewId}`, {  // Cambia la URL aquí
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(updatedReview),
+        body: JSON.stringify(updatedReview), // Enviar los datos actualizados de la reseña
       });
-
+  
       if (!response.ok) {
         throw new Error("Error al actualizar la reseña");
       }
-
+  
       alert("Reseña actualizada exitosamente");
-      navigate("/mis-resenas"); // Redirigir a la página de reseñas del usuario
+      navigate("/misReseñas"); // Redirigir a la página de reseñas del usuario
     } catch (error) {
       console.error("Error al actualizar la reseña:", error);
       alert("No se pudo actualizar la reseña.");
+    } finally {
+      setShowModal(false); // Cerrar el modal después de la confirmación
     }
+  };
+
+  // Muestra el modal para confirmar la operación
+  const handleShowModal = () => {
+    setShowModal(true);
+  };
+
+  // Maneja la cancelación de la operación
+  const handleCancel = () => {
+    setShowModal(false); // Cierra el modal sin hacer cambios
   };
 
   if (loading) {
@@ -90,11 +104,11 @@ const PaginaEditarResena = () => {
     <div className="container my-5">
       <h1 className="mb-4">Modificar Reseña</h1>
       <div className="card shadow p-4 bg-light">
-        <h5 className="card-title">Creada en: {review.game} ({review.year})</h5>
+        <h5 className="card-title">Creada en: {review.gameId.title} ({review.gameId.releaseYear})</h5>
         <textarea
           className="form-control mb-3"
-          name="comment"
-          value={updatedReview.comment}
+          name="reviewText"
+          value={updatedReview.reviewText}
           onChange={handleChange}
           rows="5"
         />
@@ -112,7 +126,7 @@ const PaginaEditarResena = () => {
           ))}
         </div>
         <div className="d-flex justify-content-between">
-          <button className="btn btn-success" onClick={handleConfirm}>
+          <button className="btn btn-success" onClick={handleShowModal}>
             Confirmar Cambios
           </button>
           <button className="btn btn-danger" onClick={() => navigate("/misReseñas")}>
@@ -120,6 +134,15 @@ const PaginaEditarResena = () => {
           </button>
         </div>
       </div>
+      
+      {/* Modal de confirmación */}
+      <ConfirmModal
+        show={showModal}
+        title="Confirmación"
+        message="¿Estás seguro de que deseas actualizar esta reseña?"
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+      />
     </div>
   );
 };
