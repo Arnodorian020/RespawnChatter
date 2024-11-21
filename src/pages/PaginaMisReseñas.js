@@ -151,6 +151,17 @@ const PaginaMisResenas = () => {
                   <h5 className="card-title">
                     Creada en: {review.gameId.title} ({review.gameId.releaseYear})
                   </h5>
+                  {/* Mostrar la imagen del juego si está disponible */}
+                  {review.gameId.image && (
+                    <div className="text-center mb-3 mt-4">
+                      <img 
+                        src={review.gameId.image} 
+                        alt={review.gameId.title} 
+                        className="img-fluid mb-3" 
+                        style={{ maxWidth: '70%', height: 'auto' }} 
+                      />
+                    </div>
+                  )}
                   <p className="card-text">{review.reviewText}</p>
                   <div className="mb-3">
                     <span className="text-warning">

@@ -4,7 +4,9 @@ import PaginaMisResenas from './pages/PaginaMisReseñas';
 import { useEffect } from 'react';
 import PaginaEditarResena from './pages/PaginaEditarReseña';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
+import PaginaMostrarJuegos from './pages/PaginaMostrarJuegos';
+import PaginaDetalleDeJuego from './pages/PaginaDetalleDeJuego';
+import NavBar from './components/NavBar';
 
 function App() {
 
@@ -17,7 +19,11 @@ function App() {
 
   return (
     <Router>
+      <NavBar />
       <Routes>
+        <Route path="/" element={<PaginaMostrarJuegos />} />
+        <Route path="/mostrarJuegos" element={<PaginaMostrarJuegos />} />
+        <Route path="/mostrarJuegos/:gameId" element={<PaginaDetalleDeJuego />} />
         <Route path='/misReseñas' element={<PaginaMisResenas/>}/>
         <Route path='/editarReseña/:reviewId' element={<PaginaEditarResena/>}/>
       </Routes>
