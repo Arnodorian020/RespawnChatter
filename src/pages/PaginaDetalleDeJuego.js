@@ -10,20 +10,19 @@ const PaginaDetalleDeJuego = () => {
   const [newReviewRating, setNewReviewRating] = useState(0);
   const { gameId } = useParams();
 
-  const token = localStorage.getItem("authToken"); // Obtener el token activo (o desde contexto)
+  const token = localStorage.getItem("authToken");
 
-  // Decodificar el token para obtener el ID del usuario
   const getUserIdFromToken = (token) => {
     try {
-      const payload = JSON.parse(atob(token.split(".")[1])); // Decodifica el payload del JWT
-      return payload.userId; // Ajustar según la estructura del token
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return payload.userId;
     } catch (error) {
       console.error("Error al decodificar el token:", error);
       return null;
     }
   };
 
-  const userId = getUserIdFromToken(token); // Obtén el ID del usuario
+  const userId = getUserIdFromToken(token);
 
   useEffect(() => {
     const fetchGameDetails = async () => {
@@ -49,7 +48,6 @@ const PaginaDetalleDeJuego = () => {
           throw new Error("Error al obtener las reviews del juego");
         }
         const data = await response.json();
-        console.log(data);
         setReviews(data);
       } catch (error) {
         console.error("Error al cargar las reviews del juego:", error);
@@ -89,7 +87,7 @@ const PaginaDetalleDeJuego = () => {
       }
 
       const newReview = await response.json();
-      setReviews([...reviews, newReview]); // Actualiza la lista de reviews
+      setReviews([...reviews, newReview]);
       setNewReviewText("");
       setNewReviewRating(0);
     } catch (error) {
@@ -101,6 +99,17 @@ const PaginaDetalleDeJuego = () => {
     setNewReviewText("");
     setNewReviewRating(0);
   };
+
+  const calculateStatistics = () => {
+    const totalReviews = reviews.length;
+    const averageRating =
+      totalReviews > 0
+        ? (reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews).toFixed(1)
+        : 0;
+    return { totalReviews, averageRating };
+  };
+
+  const { totalReviews, averageRating } = calculateStatistics();
 
   if (loading) {
     return (
@@ -121,7 +130,7 @@ const PaginaDetalleDeJuego = () => {
   }
 
   return (
-    <div className="mt-1">
+      <div className="mt-1">
       <div className="card shadow-lg bg-dark text-light border-0">
         <div className="row g-0">
           {/* Imagen del juego */}
@@ -172,7 +181,15 @@ const PaginaDetalleDeJuego = () => {
                     {genre}
                   </li>
                 ))}
-                </ul>
+              </ul>
+              <div className="mt-4">
+                <button
+                  className="btn btn-outline-light btn-lg w-100"
+                  onClick={() => window.history.back()}
+                >
+                  Volver
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -209,7 +226,7 @@ const PaginaDetalleDeJuego = () => {
           value={newReviewText}
           onChange={(e) => setNewReviewText(e.target.value)}
         ></textarea>
-        <div className="card bg-light text-light">
+           <div className="card bg-light text-light">
         <div className="d-flex justify-content-center">
           {Array.from({ length: 5 }).map((_, index) => (
             <span
@@ -230,6 +247,27 @@ const PaginaDetalleDeJuego = () => {
           <button className="btn btn-secondary" onClick={handleCancelReview}>
             Cancelar
           </button>
+        </div>
+      </div>
+
+      {/* Estadísticas del juego */}
+      <div className="mt-5">
+        <div className="container">
+          <h2 className="text-center mb-4">Estadísticas del Juego</h2>
+          <div className="row text-center">
+            <div className="col-md-6">
+              <div className="card bg-secondary text-light p-4 mb-4">
+                <h4>Total de Reseñas</h4>
+                <p className="display-4">{totalReviews}</p>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="card bg-secondary text-light p-4 mb-4">
+                <h4>Promedio de Calificaciones</h4>
+                <p className="display-4">{averageRating}</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
