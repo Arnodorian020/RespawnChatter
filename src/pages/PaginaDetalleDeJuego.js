@@ -5,6 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const PaginaDetalleDeJuego = () => {
   const [game, setGame] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [responses, setResponses] = useState({}); // Estado para respuestas de cada review
   const [loading, setLoading] = useState(true);
   const [newReviewText, setNewReviewText] = useState("");
   const [newReviewRating, setNewReviewRating] = useState(0);
@@ -57,6 +58,31 @@ const PaginaDetalleDeJuego = () => {
     fetchGameDetails();
     fetchReviews();
   }, [gameId]);
+
+  useEffect(() => {
+    // Cargar las respuestas para cada review cuando se obtienen las reviews
+    const fetchResponses = async (reviewId) => {
+      try {
+        const response = await fetch(`http://localhost:3000/responses?parentReviewId=${reviewId}`);
+        console.log(reviewId);
+        if (!response.ok) {
+          throw new Error("Error al obtener las respuestas");
+        }
+        const data = await response.json();
+        console.log(data);
+        setResponses((prevResponses) => ({
+          ...prevResponses,
+          [reviewId]: data, // Guardar las respuestas bajo el ID de la review
+        }));
+      } catch (error) {
+        console.error("Error al cargar las respuestas de la review:", error);
+      }
+    };
+
+    reviews.forEach((review) => {
+      fetchResponses(review._id);
+    });
+  }, [reviews]);
 
   const handleStarClick = (rating) => {
     setNewReviewRating(rating);
@@ -128,6 +154,22 @@ const PaginaDetalleDeJuego = () => {
       </div>
     );
   }
+
+  const handleMarkUseful = (reviewId, isUseful) => {
+    // Aquí se puede implementar una llamada a la API para actualizar la utilidad de la reseña
+    console.log(`Reseña ${reviewId} marcada como útil: ${isUseful}`);
+  };
+
+  const handleReportReview = (reviewId) => {
+    // Aquí se puede implementar una llamada a la API para reportar la reseña
+    console.log(`Reseña reportada: ${reviewId}`);
+  };
+
+  const handleReplyReview = (reviewId) => {
+    // Aquí se podría implementar un modal o un área para responder a la reseña
+    console.log(`Respondiendo a la reseña: ${reviewId}`);
+  };
+
 
   return (
       <div className="mt-1">
@@ -203,12 +245,58 @@ const PaginaDetalleDeJuego = () => {
             <div key={index} className="card bg-light mb-3">
               <div className="card-body">
                 <p className="card-text">{review.reviewText}</p>
-                <p className="card-text text-warning">
-                  {Array.from({ length: review.rating }).map((_, i) => (
-                    <span key={i}>&#9733;</span>
-                  ))}
-                </p>
+                <div className="mb-1">
+                    <span className="text-warning">
+                      {"★".repeat(review.rating)}
+                      {"☆".repeat(5 - review.rating)}
+                    </span>
+                  </div>
               </div>
+              <div className="d-flex justify-content-between align-items-center ms-2 me-2">
+                  <span>
+                    Te resultó útil:{" "}
+                    <button
+                      className="btn btn-link p-0"
+                      onClick={() => handleMarkUseful(review.id, true)}
+                    >
+                      Sí
+                    </button>{" "}
+                    |{" "}
+                    <button
+                      className="btn btn-link p-0"
+                      onClick={() => handleMarkUseful(review.id, false)}
+                    >
+                      No
+                    </button>
+                  </span>
+                  <button
+                    className="btn btn-outline-primary btn-sm"
+                    onClick={() => handleReplyReview(review.id)}
+                  >
+                    Responder
+                  </button>
+                  <button
+                    className="btn btn-outline-danger btn-sm"
+                    onClick={() => handleReportReview(review.id)}
+                  >
+                    Reportar
+                  </button>
+                </div>
+
+              {/* Respuestas de la reseña */}
+              <div className="mt-3">
+                  {responses[review._id] && responses[review._id].length > 0 ? (
+                    responses[review._id].map((response, idx) => (
+                      <div key={idx} className="card bg-secondary text-light mb-2">
+                        <div className="card-body">
+                          <p className="card-text">{response.responseText}</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-muted ms-2">Sin respuestas</p>
+                  )}
+                </div>
             </div>
           ))
         ) : (
@@ -272,6 +360,7 @@ const PaginaDetalleDeJuego = () => {
       </div>
     </div>
   );
+
 };
 
 export default PaginaDetalleDeJuego;

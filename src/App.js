@@ -14,6 +14,7 @@ function App() {
     // Guardar el token temporalmente en localStorage
     const simulatedToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzNhMjgwMDBmMDJkY2RlOGEwZDgxOTAiLCJ1c2VybmFtZSI6InVzdWFyaW8xIiwiZXhwIjoxNzE4OTI4MDAwfQ.4-BNS7iQ7gzAINVNVfut9JJBuCZzAIWJX0_WhhH3BtY";
+    const simulatedToken2 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzNhMjgwMDBmMDJkY2RlOGEwZDgxOTEiLCJ1c2VybmFtZSI6InVzdWFyaW8yIiwiZXhwIjoxNzE4OTI4MDAwfQ.gvbUfoEsazbHI56orJ1yJLGA5Eb0CFAHoUaVNXVLnc8";  
     localStorage.setItem("authToken", simulatedToken);
   }, []);
 
