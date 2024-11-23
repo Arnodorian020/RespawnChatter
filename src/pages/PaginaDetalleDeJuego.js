@@ -5,7 +5,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const PaginaDetalleDeJuego = () => {
   const [game, setGame] = useState(null);
   const [reviews, setReviews] = useState([]);
-  const [responses, setResponses] = useState({}); // Estado para respuestas de cada review
+  const [responses, setResponses] = useState({}); // Inicializar como []
+  const [additionalData, setAdditionalData] = useState({});
   const [loading, setLoading] = useState(true);
   const [newReviewText, setNewReviewText] = useState("");
   const [newReviewRating, setNewReviewRating] = useState(0);
@@ -59,12 +60,32 @@ const PaginaDetalleDeJuego = () => {
     fetchReviews();
   }, [gameId]);
 
+  const renderResponses = (responsesData, depth = 0) => {
+    return responsesData.map((response, idx) => (
+      <div key={response._id} className={`card bg-${depth % 2 === 0 ? 'secondary' : 'dark'} text-light mb-2 ms-${depth * 3}`}>
+        <div className="card-body">
+          <h5 className="card-title">Respuesta de {response.userId.username}</h5>
+          <p className="card-text">{response.responseText}</p>
+  
+          {/* Verificar si existen respuestas adicionales y renderizarlas recursivamente */}
+          {additionalData[response._id] && additionalData[response._id].length > 0 ? (
+            <div>
+              {renderResponses(additionalData[response._id], depth + 1)} {/* Llamada recursiva */}
+            </div>
+          ) : (
+            <p className="text-muted ms-2">Sin respuestas adicionales</p>
+          )}
+        </div>
+      </div>
+    ));
+  };
+  
   useEffect(() => {
     // Cargar las respuestas para cada review cuando se obtienen las reviews
     const fetchResponses = async (reviewId) => {
       try {
         const response = await fetch(`http://localhost:3000/responses?parentReviewId=${reviewId}`);
-        console.log(reviewId);
+        console.log("Esta es la review id para las respuestas", reviewId);
         if (!response.ok) {
           throw new Error("Error al obtener las respuestas");
         }
@@ -83,6 +104,50 @@ const PaginaDetalleDeJuego = () => {
       fetchResponses(review._id);
     });
   }, [reviews]);
+
+  useEffect(() => {
+    // Función para cargar datos adicionales para cada respuesta
+    const fetchAdditionalData = async (responseId) => {
+      try {
+        const response = await fetch(`http://localhost:3000/responses?parentResponseId=${responseId}`);
+        console.log("Esta es la id de respuesta: ", responseId);
+        if (!response.ok) {
+          throw new Error("Error al obtener los datos adicionales");
+        }
+        const data = await response.json();
+        console.log("Estas son las respuestas a esta respuesta:", responseId, data);
+  
+        // Almacenar los datos adicionales en el estado
+        setAdditionalData((prevData) => ({
+          ...prevData,
+          [responseId]: data, // Asociar los datos con el ID de la respuesta
+        }));
+  
+        // Verificar si la respuesta tiene más respuestas
+        data.forEach((additionalResponse) => {
+          if (!additionalData[additionalResponse._id]) {
+            // Si la respuesta adicional no tiene datos adicionales, hacer la llamada recursiva
+            fetchAdditionalData(additionalResponse._id);
+          }
+        });
+      } catch (error) {
+        console.error("Error al cargar los datos adicionales para la respuesta:", error);
+      }
+    };
+  
+    // Iterar sobre todas las respuestas de las reviews
+    Object.values(responses).forEach((responseGroup) => {
+      responseGroup.forEach((response) => {
+        // Verificar si los datos adicionales no están cargados
+        if (!additionalData[response._id]) {
+          fetchAdditionalData(response._id); // Llamar para obtener datos adicionales si no están cargados
+        }
+      });
+    });
+  }, [responses, additionalData]); // Este efecto depende de `responses` y `additionalData`
+  
+  
+  
 
   const handleStarClick = (rating) => {
     setNewReviewRating(rating);
@@ -154,6 +219,9 @@ const PaginaDetalleDeJuego = () => {
       </div>
     );
   }
+
+  console.log("Respuestas:", responses);
+  console.log("Datos adicionales:", additionalData);
 
   const handleMarkUseful = (reviewId, isUseful) => {
     // Aquí se puede implementar una llamada a la API para actualizar la utilidad de la reseña
@@ -285,19 +353,30 @@ const PaginaDetalleDeJuego = () => {
 
               {/* Respuestas de la reseña */}
               <div className="mt-3">
-                  {responses[review._id] && responses[review._id].length > 0 ? (
-                    responses[review._id].map((response, idx) => (
-                      <div key={idx} className="card bg-secondary text-light mb-2">
-                        <div className="card-body">
-                          <p className="card-text">{response.responseText}</p>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-muted ms-2">Sin respuestas</p>
-                  )}
-                </div>
-            </div>
+                {responses[review._id] && responses[review._id].length > 0 ? (
+                  responses[review._id].map((response, idx) => (
+                  <div key={response._id} className="card bg-secondary text-light mb-2">
+                    <div className="card-body">
+                      <h5 className="card-title">Respuesta de {response.userId.username}</h5>
+                      <p className="card-text">{response.responseText}</p>
+
+                      {/* Mostrar respuestas adicionales a la respuesta */}
+                      {additionalData[response._id] && additionalData[response._id].length > 0 ? (
+                        renderResponses(additionalData[response._id], 1) // Llamar la función recursiva para respuestas adicionales
+                      ) : (
+                        <p className="text-muted ms-2">Sin respuestas adicionales</p>
+                      )}
+                    </div>
+                  </div>
+                  ))
+                ) : (
+                  <p className="text-muted ms-2">Sin respuestas</p>
+                )}
+              </div>
+
+
+              </div>
+            
           ))
         ) : (
           <p className="text-dark text-center">Aún no hay reseñas para este juego.</p>
