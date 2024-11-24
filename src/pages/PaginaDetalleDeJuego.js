@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import ReplyModal from "../components/ReplyModal";
+import axios from "axios";
+import InappropriateContentModal from "../components/InnapropiateContentModal";
 
 const PaginaDetalleDeJuego = () => {
   const [game, setGame] = useState(null);
@@ -11,6 +14,12 @@ const PaginaDetalleDeJuego = () => {
   const [newReviewText, setNewReviewText] = useState("");
   const [newReviewRating, setNewReviewRating] = useState(0);
   const { gameId } = useParams();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [currentReplyTarget, setCurrentReplyTarget] = useState(null); // Almacena el ID de la reseña o respuesta
+  const [isReplyingToReview, setIsReplyingToReview] = useState(false); // ¿Respondiendo a una reseña o respuesta?
+  const [parentReviewId, setParentReviewId] = useState(null);
+  const [modalcontentVisible, setModalContentVisible] = useState(false);
+
 
   const token = localStorage.getItem("authToken");
 
@@ -61,11 +70,42 @@ const PaginaDetalleDeJuego = () => {
   }, [gameId]);
 
   const renderResponses = (responsesData, depth = 0) => {
-    return responsesData.map((response, idx) => (
+    return responsesData.map((response) => (
       <div key={response._id} className={`card bg-${depth % 2 === 0 ? 'secondary' : 'dark'} text-light mb-2 ms-${depth * 3}`}>
         <div className="card-body">
           <h5 className="card-title">Respuesta de {response.userId.username}</h5>
           <p className="card-text">{response.responseText}</p>
+
+          <div className="d-flex justify-content-between align-items-center ms-4 me-4 mb-3">
+                <span>
+                  Te resultó útil:{" "}
+                  <button
+                    className="btn btn-link p-0"
+                    onClick={() => handleMarkUseful(response._id, true)}
+                  >
+                    Sí
+                  </button>{" "}
+                  |{" "}
+                  <button
+                    className="btn btn-link p-0"
+                    onClick={() => handleMarkUseful(response._id, false)}
+                  >
+                    No
+                  </button>
+                </span>
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={() => handleReplyResponse(response._id, response.parentReviewId)}
+                >
+                  Responder
+                </button>
+                <button
+                  className="btn btn-danger btn-sm"
+                  onClick={() => handleReportReview(response.id)}
+                >
+                  Reportar
+                </button>
+              </div>
   
           {/* Verificar si existen respuestas adicionales y renderizarlas recursivamente */}
           {additionalData[response._id] && additionalData[response._id].length > 0 ? (
@@ -73,7 +113,7 @@ const PaginaDetalleDeJuego = () => {
               {renderResponses(additionalData[response._id], depth + 1)} {/* Llamada recursiva */}
             </div>
           ) : (
-            <p className="text-muted ms-2">Sin respuestas adicionales</p>
+            <p className="text-muted ms-2"></p>
           )}
         </div>
       </div>
@@ -160,6 +200,41 @@ const PaginaDetalleDeJuego = () => {
     }
 
     try {
+      
+      const response1 = await axios.post('http://localhost:3000/content-safety/moderate', {
+        text: newReviewText,
+        language: 'es',
+      });
+  
+      // Verificar si la respuesta de la moderación es exitosa
+      if (response1.status === 200 || response1.status === 201) {
+        console.log("Llamada al endpoint de moderación exitosa:", response1.data);
+        
+        // Acceder al puntaje de sentimiento (score)
+        const sentimentScore = response1.data.documentSentiment.score;
+        const sentimentMagnitude = response1.data.documentSentiment.magnitude;
+  
+        // Establecer un umbral para la moderación, por ejemplo, si el puntaje es menor que -0.5 o mayor que 0.5
+        if (sentimentScore < -0.5 || sentimentScore > 0.5) {
+          console.log('Contenido inapropiado detectado: sentimiento excesivamente negativo o positivo');
+          setModalContentVisible(true);
+          throw new Error('El contenido tiene un tono inapropiado.');
+        }
+        
+        // Opcionalmente puedes agregar un umbral mínimo de magnitud para evitar textos ambiguos (por ejemplo, con poca emoción)
+        if (sentimentMagnitude < 0.1) {
+          console.log('Contenido con baja magnitud de sentimiento, puede ser neutral o poco significativo');
+          setModalContentVisible(true);
+          throw new Error('El contenido tiene un tono neutral o poco significativo.');
+        }
+  
+        console.log('Contenido adecuado para publicar.');
+  
+      } else {
+        console.error("Error al llamar al endpoint de moderación:", response1.status);
+        throw new Error("Error al verificar el contenido.");
+      }
+      
       const response = await fetch(`http://localhost:3000/reviews`, {
         method: "POST",
         headers: {
@@ -220,8 +295,6 @@ const PaginaDetalleDeJuego = () => {
     );
   }
 
-  console.log("Respuestas:", responses);
-  console.log("Datos adicionales:", additionalData);
 
   const handleMarkUseful = (reviewId, isUseful) => {
     // Aquí se puede implementar una llamada a la API para actualizar la utilidad de la reseña
@@ -234,13 +307,89 @@ const PaginaDetalleDeJuego = () => {
   };
 
   const handleReplyReview = (reviewId) => {
-    // Aquí se podría implementar un modal o un área para responder a la reseña
-    console.log(`Respondiendo a la reseña: ${reviewId}`);
+    setIsReplyingToReview(true);
+    setCurrentReplyTarget(reviewId);
+    setModalVisible(true);
   };
+
+  const handleReplyResponse = (responseId, parentReviewId) => {
+    setIsReplyingToReview(false);
+    setCurrentReplyTarget(responseId);
+    setModalVisible(true);
+    setParentReviewId(parentReviewId);
+  };
+
+  const handleReplySubmit = async (replyText) => {
+    try {
+      // Hacer una solicitud POST a tu endpoint backend que realiza el análisis de sentimiento con Google Cloud Natural Language
+      const response = await axios.post('http://localhost:3000/content-safety/moderate', {
+        text: replyText,
+        language: 'es',
+      });
+  
+      // Verificar si la respuesta de la moderación es exitosa
+      if (response.status === 200 || response.status === 201) {
+        console.log("Llamada al endpoint de moderación exitosa:", response.data);
+        
+        // Acceder al puntaje de sentimiento (score)
+        const sentimentScore = response.data.documentSentiment.score;
+        const sentimentMagnitude = response.data.documentSentiment.magnitude;
+  
+        // Establecer un umbral para la moderación, por ejemplo, si el puntaje es menor que -0.5 o mayor que 0.5
+        if (sentimentScore < -0.5 || sentimentScore > 0.5) {
+          console.log('Contenido inapropiado detectado: sentimiento excesivamente negativo o positivo');
+          setModalContentVisible(true);
+          throw new Error('El contenido tiene un tono inapropiado.');
+        }
+        
+        // Opcionalmente puedes agregar un umbral mínimo de magnitud para evitar textos ambiguos (por ejemplo, con poca emoción)
+        if (sentimentMagnitude < 0.1) {
+          console.log('Contenido con baja magnitud de sentimiento, puede ser neutral o poco significativo');
+          setModalContentVisible(true);
+          throw new Error('El contenido tiene un tono neutral o poco significativo.');
+        }
+  
+        console.log('Contenido adecuado para publicar.');
+  
+      } else {
+        console.error("Error al llamar al endpoint de moderación:", response.status);
+        throw new Error("Error al verificar el contenido.");
+      }
+  
+      // Proceder a publicar el contenido si la moderación fue exitosa
+      const endpointPost = isReplyingToReview
+        ? `http://localhost:3000/responses`  // Respuesta a reseña
+        : `http://localhost:3000/responses`; // Respuesta a respuesta
+  
+      const payload = isReplyingToReview
+        ? { parentReviewId: currentReplyTarget, parentResponseId: null, userId: userId, responseText: replyText }
+        : { parentReviewId: parentReviewId, parentResponseId: currentReplyTarget, userId: userId, responseText: replyText };
+  
+      const postResponse = await fetch(endpointPost, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+  
+      if (!postResponse.ok) {
+        throw new Error("Error al publicar la respuesta");
+      }
+  
+      console.log("Respuesta publicada:", await postResponse.json());
+    } catch (error) {
+      console.error("Error al enviar la respuesta:", error);
+    }
+  };
+  
+
 
 
   return (
       <div className="mt-1">
+      <InappropriateContentModal 
+        show={modalcontentVisible} 
+        handleClose={() => setModalContentVisible(false)} 
+      />
       <div className="card shadow-lg bg-dark text-light border-0">
         <div className="row g-0">
           {/* Imagen del juego */}
@@ -314,74 +463,65 @@ const PaginaDetalleDeJuego = () => {
               <div className="card-body">
                 <p className="card-text">{review.reviewText}</p>
                 <div className="mb-1">
-                    <span className="text-warning">
-                      {"★".repeat(review.rating)}
-                      {"☆".repeat(5 - review.rating)}
-                    </span>
-                  </div>
-              </div>
-              <div className="d-flex justify-content-between align-items-center ms-2 me-2">
-                  <span>
-                    Te resultó útil:{" "}
-                    <button
-                      className="btn btn-link p-0"
-                      onClick={() => handleMarkUseful(review.id, true)}
-                    >
-                      Sí
-                    </button>{" "}
-                    |{" "}
-                    <button
-                      className="btn btn-link p-0"
-                      onClick={() => handleMarkUseful(review.id, false)}
-                    >
-                      No
-                    </button>
+                  <span className="text-warning">
+                    {"★".repeat(review.rating)}
+                    {"☆".repeat(5 - review.rating)}
                   </span>
-                  <button
-                    className="btn btn-outline-primary btn-sm"
-                    onClick={() => handleReplyReview(review.id)}
-                  >
-                    Responder
-                  </button>
-                  <button
-                    className="btn btn-outline-danger btn-sm"
-                    onClick={() => handleReportReview(review.id)}
-                  >
-                    Reportar
-                  </button>
                 </div>
-
-              {/* Respuestas de la reseña */}
-              <div className="mt-3">
-                {responses[review._id] && responses[review._id].length > 0 ? (
-                  responses[review._id].map((response, idx) => (
-                  <div key={response._id} className="card bg-secondary text-light mb-2">
-                    <div className="card-body">
-                      <h5 className="card-title">Respuesta de {response.userId.username}</h5>
-                      <p className="card-text">{response.responseText}</p>
-
-                      {/* Mostrar respuestas adicionales a la respuesta */}
-                      {additionalData[response._id] && additionalData[response._id].length > 0 ? (
-                        renderResponses(additionalData[response._id], 1) // Llamar la función recursiva para respuestas adicionales
-                      ) : (
-                        <p className="text-muted ms-2">Sin respuestas adicionales</p>
-                      )}
-                    </div>
-                  </div>
-                  ))
-                ) : (
-                  <p className="text-muted ms-2">Sin respuestas</p>
-                )}
+              </div>
+              <div className="d-flex justify-content-between align-items-center ms-4 me-4 mb-3">
+                <span>
+                  Te resultó útil:{" "}
+                  <button
+                    className="btn btn-link p-0"
+                    onClick={() => handleMarkUseful(review.id, true)}
+                  >
+                    Sí
+                  </button>{" "}
+                  |{" "}
+                  <button
+                    className="btn btn-link p-0"
+                    onClick={() => handleMarkUseful(review.id, false)}
+                  >
+                    No
+                  </button>
+                </span>
+                <button
+                  className="btn btn-outline-primary btn-sm"
+                  onClick={() => handleReplyReview(review._id)}
+                >
+                  Responder
+                </button>
+                <button
+                  className="btn btn-outline-danger btn-sm"
+                  onClick={() => handleReportReview(review.id)}
+                >
+                  Reportar
+                </button>
               </div>
 
-
-              </div>
-            
+              {/* Respuestas a esta review */}
+              {responses[review._id] && responses[review._id].length > 0 && (
+                <div className="mt-2 ms-4">
+                  <h5 className="text-black">Respuestas:</h5>
+                  {renderResponses(responses[review._id])}
+                </div>
+              )}
+            </div>
           ))
         ) : (
-          <p className="text-dark text-center">Aún no hay reseñas para este juego.</p>
+          <p>No hay reseñas disponibles para este juego.</p>
         )}
       </div>
+
+      {/* Modal para responder */}
+      <ReplyModal
+        show={modalVisible}
+        onHide={() => setModalVisible(false)}
+        onSubmit={handleReplySubmit}
+        title={isReplyingToReview ? "Responder a la Reseña" : "Responder a la Respuesta"}
+        placeholder={isReplyingToReview ? "Escribe tu respuesta a la reseña..." : "Escribe tu respuesta..."}
+      />
 
       {/* Crear nueva review */}
       <div className="card bg-dark text-light mt-5 p-4">
