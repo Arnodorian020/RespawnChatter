@@ -1,63 +1,84 @@
-/* not-found-container aplica la imagen de fondo y ajusta el contenido */
+/* Incluir la fuente Jaro desde la URL proporcionada */
+@import url('https://fonts.googleapis.com/css2?family=Jaro:opsz@6..72&display=swap');
+
+/* Contenedor para el cuadro con el texto */
 .not-found-container {
     background-image: url('../../assets/images/3433329 1.png'); /* Ruta de la imagen */
-    background-size: cover; /* Hace que la imagen ocupe toda la pantalla */
-    background-position: center; /* Centra la imagen */
-    height: 100vh; /* Asegura que ocupe toda la altura de la pantalla */
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
     display: flex;
-    flex-direction: column; /* Asegura que los elementos se apilen verticalmente */
     justify-content: center;
     align-items: center;
     text-align: center;
-    color: white;  /* Cambia el color del texto a blanco */
-    padding: 20px; /* Añadir un poco de espacio alrededor */
-  }
-  
-  /* Ajuste del texto y contenido de la página 404 */
-  h1 {
-    font-size: 48px;
+    padding: 20px;
+}
+
+/* Cuadro con las dimensiones, color oscuro y transparencia */
+.text-box {
+    background-color: rgba(0, 0, 0, 0.6); /* Fondo oscuro con transparencia */
+    width: 700px;
+    height: 600px;
+    border-radius: 40px; /* Esquinas redondeadas */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Sombra sutil */
+}
+
+/* Estilo de los encabezados */
+h1 {
+    font-size: 78px;
     margin-bottom: 20px;
+    font-family: 'Jaro', sans-serif; /* Usar la fuente Jaro */
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* Sombra para mejorar la visibilidad del texto */
-  }
-  
-  .zoom-area {
+    letter-spacing: 3px; /* Ajusta este valor según el espaciado que prefieras */
+}
+
+/* Estilo del texto debajo del título */
+.zoom-area {
     font-size: 20px;
     margin-top: 10px;
+    font-family: 'Jaro', sans-serif; /* Usar la fuente Jaro */
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* Sombra para mejorar la visibilidad del texto */
-  }
-  
-  .error-container {
-    text-align: center;
+}
+
+/* Resto de estilos, como los números en el error 404 */
+.error-container {
     font-size: 106px;
-    font-family: 'Catamaran', sans-serif;
+    font-family: 'Jaro', sans-serif; /* Usar la fuente Jaro */
     font-weight: 800;
     margin: 70px 15px;
-  }
-  
-  .error-container > span {
+    letter-spacing: 1px; /* Ajusta este valor según el espaciado que prefieras */
+}
+
+.error-container > span {
     display: inline-block;
     position: relative;
-  }
-  
-  .error-container > span.four {
+}
+
+.error-container > span.four {
     width: 136px;
     height: 43px;
     border-radius: 999px;
     background:
       linear-gradient(140deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.07) 43%, transparent 44%, transparent 100%),
       linear-gradient(105deg, transparent 0%, transparent 40%, rgba(0, 0, 0, 0.06) 41%, rgba(0, 0, 0, 0.07) 76%, transparent 77%, transparent 100%),
-      linear-gradient(to right, #d89ca4, #e27b7e);
-  }
-  
-  .error-container > span.four:before,
-  .error-container > span.four:after {
+      linear-gradient(to top, #8FBC8F, #A9CBA7, #B5E4B3, #C8F2A4);
+}
+
+.error-container > span.four:before,
+.error-container > span.four:after {
     content: '';
     display: block;
     position: absolute;
     border-radius: 999px;
-  }
-  
-  .error-container > span.four:before {
+}
+
+.error-container > span.four:before {
     width: 43px;
     height: 156px;
     left: 60px;
@@ -65,30 +86,30 @@
     background:
       linear-gradient(128deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.07) 40%, transparent 41%, transparent 100%),
       linear-gradient(116deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.07) 50%, transparent 51%, transparent 100%),
-      linear-gradient(to top, #99749D, #B895AB, #CC9AA6, #D7969E, #E0787F);
-  }
-  
-  .error-container > span.four:after {
+      linear-gradient(to top, #8FBC8F, #A9CBA7, #B5E4B3, #C8F2A4); /* Variación en verde */
+}
+
+.error-container > span.four:after {
     width: 137px;
     height: 43px;
     transform: rotate(-49.5deg);
     left: -18px;
     bottom: 36px;
-    background: linear-gradient(to right, #99749D, #B895AB, #CC9AA6, #D7969E, #E0787F);
-  }
-  
-  .error-container > span.zero {
+    background: linear-gradient(to right, #8FBC8F, #A9CBA7, #B5E4B3, #C8F2A4); /* Verde más claro */
+}
+
+.error-container > span.zero {
     vertical-align: text-top;
     width: 156px;
     height: 156px;
     border-radius: 999px;
     background: linear-gradient(-45deg, transparent 0%, rgba(0, 0, 0, 0.06) 50%, transparent 51%, transparent 100%),
-      linear-gradient(to top right, #99749D, #99749D, #B895AB, #CC9AA6, #D7969E, #ED8687, #ED8687);
+    linear-gradient(to top right, #A9CBA7, #8FBC8F, #6B8E23, #556B2F, #3D5B34); /* Variación de verdes */
     overflow: hidden;
     animation: bgshadow 5s infinite;
-  }
-  
-  .error-container > span.zero:before {
+}
+
+.error-container > span.zero:before {
     content: '';
     display: block;
     position: absolute;
@@ -101,9 +122,9 @@
     background:
       linear-gradient(95deg, transparent 0%, transparent 8%, rgba(0, 0, 0, 0.07) 9%, transparent 50%, transparent 100%),
       linear-gradient(85deg, transparent 0%, transparent 19%, rgba(0, 0, 0, 0.05) 20%, rgba(0, 0, 0, 0.07) 91%, transparent 92%, transparent 100%);
-  }
-  
-  .error-container > span.zero:after {
+}
+
+.error-container > span.zero:after {
     content: '';
     display: block;
     position: absolute;
@@ -114,15 +135,15 @@
     bottom: 43px;
     background: #FDFAF5;
     box-shadow: -2px 2px 2px 0px rgba(0, 0, 0, 0.1);
-  }
-  
-  .screen-reader-text {
+}
+
+.screen-reader-text {
     position: absolute;
     top: -9999em;
     left: -9999em;
-  }
-  
-  @keyframes bgshadow {
+}
+
+@keyframes bgshadow {
     0% {
       box-shadow: inset -160px 160px 0px 5px rgba(0, 0, 0, 0.4);
     }
@@ -135,45 +156,46 @@
     100% {
       box-shadow: inset 160px -160px 0px 5px rgba(0, 0, 0, 0.4);
     }
-  }
-  
-  /* demo stuff */
-  * {
+}
+
+/* Ajuste de estilo general */
+* {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-  }
-  
-  body {
+}
+
+body {
     background-color: #FDFAF5;
     margin-bottom: 50px;
-  }
-  
-  html, button, input, select, textarea {
+}
+
+html, button, input, select, textarea {
     font-family: 'Montserrat', Helvetica, sans-serif;
     color: #bbb;
-  }
-  
-  h1 {
+}
+
+h1 {
     text-align: center;
     margin: 30px 15px;
-  }
-  
-  .zoom-area {
+}
+
+.zoom-area {
     max-width: 490px;
-    margin: 30px auto 30px;
-    font-size: 19px;
+    margin: 10px auto 10px;
+    font-size: 29px;
     text-align: center;
-  }
-  
-  .link-container {
+    font-family: 'Alegreya Sans', sans-serif; /* Fuente Alegreya Sans */
+}
+
+.link-container {
     text-align: center;
-  }
-  
-  a.more-link {
+}
+
+a.more-link {
     text-transform: uppercase;
     font-size: 13px;
-    background-color: #de7e85;
+    background-color: #6B8E23; /* Verde olivo */
     padding: 10px 15px;
     border-radius: 0;
     color: #fff;
@@ -184,5 +206,4 @@
     text-decoration: none;
     margin-top: 50px;
     letter-spacing: 1px;
-  }
-  
+}

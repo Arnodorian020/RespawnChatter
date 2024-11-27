@@ -4,13 +4,15 @@ import '../styles/pages/NotFound.css';  // AsegÃºrate de que el archivo CSS estÃ
 const NotFound = () => {
   return (
     <div className="not-found-container">
-      <h1>404 Not Found</h1>
-      <p className="zoom-area"><b>Hola profe :3</b></p>
-      <section className="error-container">
-        <span className="four"><span className="screen-reader-text">4</span></span>
-        <span className="zero"><span className="screen-reader-text">0</span></span>
-        <span className="four"><span className="screen-reader-text">4</span></span>
-      </section>
+      <div className="text-box">
+        <h1>404 Opssss</h1>
+        <p className="zoom-area"><b>Hola profe :3</b></p>
+        <section className="error-container">
+          <span className="four"><span className="screen-reader-text">4</span></span>
+          <span className="zero"><span className="screen-reader-text">0</span></span>
+          <span className="four"><span className="screen-reader-text">4</span></span>
+        </section>
+      </div>
     </div>
   );
 }
