@@ -1,0 +1,43 @@
+/* /styles/pages/HomePage.css */
+.homepage {
+    position: relative;
+    height: 100vh;
+    background-image: url('../../assets/images/3433329 1.png');
+    background-size: cover;
+  }
+  
+  .homepage-logo {
+    margin: 0 auto;
+    text-align: center;
+    padding-top: 20px;
+  }
+  
+  .homepage-logo img {
+    width: 150px;
+    height: auto;
+  }
+  
+  .homepage-text {
+    text-align: center;
+    color: #ffffff;
+    font-size: 2rem;
+    margin-top: 20px;
+  }
+  
+  .login-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #99B45C;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  .login-button:hover {
+    background-color: #86a24e;
+  }
+  
