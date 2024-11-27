@@ -47,8 +47,8 @@
 .login-button {
     background-color: #99B45C;
     color: #ffffff;
-    width: 200px;  /* Ancho del botón */
-    height: 60px;  /* Alto del botón */
+    width: 180px;  /* Ancho del botón */
+    height: 65px;  /* Alto del botón */
     border: none;
     border-radius: 40px;  /* Radio de las esquinas */
     font-family: 'Raleway', sans-serif;
