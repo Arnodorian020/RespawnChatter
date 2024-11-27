@@ -3,7 +3,7 @@ import PostsList from '../components/PostsList';
 import CreatePost from '../components/CreatePost';
 import { fetchPosts, createPost } from '../services/forumService';
 
-export default function HomePage({ onPostClick }) {
+export default function ForumPage({ onPostClick }) {
   const [posts, setPosts] = useState([]);
   const [isCreatingPost, setIsCreatingPost] = useState(false);
 
