@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ConfirmModal from "../components/ConfirmModal";  // Asegúrate de importar el modal de confirmación
+import "../styles/BackgroundImage.css";
+
 
 const PaginaEditarResena = () => {
   const { reviewId } = useParams(); // Obtener el ID de la reseña desde la URL
@@ -101,8 +103,9 @@ const PaginaEditarResena = () => {
   }
 
   return (
+    <div id="background-container">
     <div className="container my-5">
-      <h1 className="mb-4">Modificar Reseña</h1>
+      <h1 className="mb-4 text-white">Modificar Reseña</h1>
       <div className="card shadow p-4 bg-light">
         <h5 className="card-title">Creada en: {review.gameId.title} ({review.gameId.releaseYear})</h5>
         <textarea
@@ -143,6 +146,7 @@ const PaginaEditarResena = () => {
         onConfirm={handleConfirm}
         onCancel={handleCancel}
       />
+    </div>
     </div>
   );
 };

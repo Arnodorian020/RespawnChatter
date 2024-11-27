@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "../styles/BackgroundImage.css";
+
 
 const PaginaMostrarJuegos = () => {
   const [games, setGames] = useState([]);
@@ -32,8 +34,9 @@ const PaginaMostrarJuegos = () => {
   };
 
   return (
+    <div id="background-container">
     <div className="container my-5">
-      <h2 className="text-center text-black mb-4">Juegos Disponibles</h2>
+      <h2 className="text-center text-white mb-4">Juegos Disponibles</h2>
       {loading ? (
         <div className="text-center">
           <div className="spinner-border text-light" role="status">
@@ -70,6 +73,7 @@ const PaginaMostrarJuegos = () => {
           ))}
         </div>
       )}
+    </div>
     </div>
   );
 };

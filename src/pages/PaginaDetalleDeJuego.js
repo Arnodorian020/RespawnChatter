@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import ReplyModal from "../components/ReplyModal";
 import axios from "axios";
 import InappropriateContentModal from "../components/InnapropiateContentModal";
+import "../styles/BackgroundImage.css";
 
 const PaginaDetalleDeJuego = () => {
   const [game, setGame] = useState(null);
@@ -385,6 +386,7 @@ const PaginaDetalleDeJuego = () => {
 
 
   return (
+    <div id="background-container">
       <div className="mt-1">
       <InappropriateContentModal 
         show={modalcontentVisible} 
@@ -456,7 +458,7 @@ const PaginaDetalleDeJuego = () => {
 
       {/* Lista de reviews */}
       <div className="mt-5">
-        <h2 className="text-black text-center mb-4">Reseñas de otros usuarios</h2>
+        <h2 className="text-white text-center mb-4">Reseñas de otros usuarios</h2>
         {reviews.length > 0 ? (
           reviews.map((review, index) => (
             <div key={index} className="card bg-light mb-3">
@@ -560,7 +562,7 @@ const PaginaDetalleDeJuego = () => {
       {/* Estadísticas del juego */}
       <div className="mt-5">
         <div className="container">
-          <h2 className="text-center mb-4">Estadísticas del Juego</h2>
+          <h2 className="text-center mb-4 text-white">Estadísticas del Juego</h2>
           <div className="row text-center">
             <div className="col-md-6">
               <div className="card bg-secondary text-light p-4 mb-4">
@@ -577,6 +579,7 @@ const PaginaDetalleDeJuego = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 

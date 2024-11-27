@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmModal from "../components/ConfirmModal";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "../styles/BackgroundImage.css";
+
 
 const PaginaMisResenas = () => {
   const [reviews, setReviews] = useState([]);
@@ -121,11 +123,13 @@ const PaginaMisResenas = () => {
   };
 
   return (
+    
+    <div id="background-container" >
     <div className="container my-5">
       <header className="d-flex justify-content-between align-items-center mb-4">
-        <h1 className="text-black">Mis Reseñas</h1>
+        <h1 className="text-white">Mis Reseñas</h1>
         <div className="d-flex align-items-center">
-          <label htmlFor="sort" className="me-2 text-black">
+          <label htmlFor="sort" className="me-2 text-white fw-bold">
             Ordenar por:
           </label>
           <select id="sort" className="form-select w-auto" value={sortBy} onChange={handleSortChange}>
@@ -204,6 +208,7 @@ const PaginaMisResenas = () => {
         onConfirm={handleDelete}
         onCancel={() => setModalData({ ...modalData, show: false })}
       />
+    </div>
     </div>
   );
 };
