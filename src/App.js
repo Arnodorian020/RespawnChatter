@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Auth0Provider } from '@auth0/auth0-react';  // Importa Auth0Provider
-import Home from './pages/Home';
+import Home from './pages/home';
 import Dashboard from './pages/Dashboard';
 import ProfilePage from './pages/ProfilePage';
 import NotFound from './pages/NotFound';
