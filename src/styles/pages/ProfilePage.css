@@ -1,0 +1,116 @@
+/* Contenedor principal de la página */
+.profile-page {
+    background-image: url('../../assets/images/3433329 1.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 20px;
+    color: white;
+}
+
+/* Header con fondo oscuro y opaco */
+.main-header {
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro y opaco */
+    width: 100%;
+    padding: 15px 20px; /* Ajuste para espacio horizontal */
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between; /* Distribuir enlaces y botón */
+    align-items: center;
+    color: white;
+}
+
+/* Estilos para los enlaces del navbar */
+.navbar-list {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-item {
+    text-decoration: none;
+    color: white;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.navbar-item:hover {
+    color: #99B45C; /* Color al pasar el mouse */
+}
+
+/* Contenedor del botón de logout */
+.logout-button-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+/* Estilos del botón logout */
+.logout-button {
+    background-color: #e74c3c; /* Color del fondo */
+    color: #ffffff; /* Color del texto */
+    width: 180px;
+    height: 55px;
+    border: none;
+    border-radius: 40px; /* Bordes redondeados */
+    font-family: 'Raleway', sans-serif; /* Fuente Raleway */
+    font-weight: 800;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.9), 0 -4px 10px rgba(0, 0, 0, 0.9); /* Sombra */
+}
+
+.logout-button:hover {
+    background-color: #c0392b;
+}
+
+/* Contenedor principal del perfil */
+.profile-container {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 40px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 400px;
+    margin-top: 50px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Estilos para la imagen del avatar del usuario */
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+}
+
+/* Estilo para los textos del perfil */
+.profile-text-container {
+    text-align: center;
+}
+
+.profile-container h2 {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.profile-container p {
+    font-size: 18px;
+}
