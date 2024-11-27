@@ -14,23 +14,6 @@ const ProfilePage = () => {
     return (
         isAuthenticated && (
             <div className="profile-page">
-                {/* Header con navegación */}
-                <header className="main-header">
-                    <nav>
-                        <ul className="navbar-list">
-                            <li><Link to="/profile" className="navbar-item">Perfil</Link></li>
-                            <li><Link to="/forum" className="navbar-item">Foro de discusión</Link></li>
-                            <li><Link to="/emulator" className="navbar-item">Emulador de Video Juegos</Link></li>
-                            <li><Link to="/news" className="navbar-item">Novedades</Link></li>
-                            <li><Link to="/reviews" className="navbar-item">Mis Reseñas</Link></li>
-                        </ul>
-                    </nav>
-                    {/* Botón de Logout */}
-                    <div className="logout-button-container">
-                        <LogoutButton />
-                    </div>
-                </header>
-
                 {/* Contenido del perfil */}
                 <div className="profile-container">
                     <img src={user.picture} alt={user.name} className="profile-avatar" />

@@ -161,7 +161,7 @@ const PaginaMisResenas = () => {
                       <img 
                         src={review.gameId.image} 
                         alt={review.gameId.title} 
-                        className="img-fluid mb-3" 
+                        className="d-block mx-auto" 
                         style={{ maxWidth: '70%', height: 'auto' }} 
                       />
                     </div>
