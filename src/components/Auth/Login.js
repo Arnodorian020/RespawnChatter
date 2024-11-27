@@ -11,7 +11,7 @@ export const LoginButton = () => {
 
   return (
     <button className="login-button" onClick={handleLogin}>
-      Login
+      INICIAR SESIÓN
     </button>
   );
 };

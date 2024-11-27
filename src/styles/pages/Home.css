@@ -1,6 +1,8 @@
 /* /styles/pages/HomePage.css */
+@import url('https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@400;700&family=Raleway:wght@700&display=swap');
+
 .homepage {
-    position: relative;  /* Asegura que los elementos posicionados dentro de este contenedor se posicionen en relación con él */
+    position: relative;
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -11,54 +13,84 @@
     background-position: center;
 }
 
+/* Nuevo contenedor con fondo oscuro y opaco */
+.homepage-text-container {
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro y opaco */
+    width: 650px; /* Establece el ancho del contenedor */
+    height: 520px; /* Establece la altura del contenedor */
+    padding: 40px;
+    border-radius: 40px; /* Esquinas redondeadas */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.9), 0 -4px 10px rgba(0, 0, 0, 0.9);
+}
+
+
+/* Estilos del texto del logo */
+.logo-text {
+    font-family: 'Alegreya Sans', sans-serif;  /* Asegura que la fuente Alegreya Sans se aplica aquí */
+    letter-spacing: 1px;
+    font-size: 2rem; /* Tamaño ajustado */
+    margin-bottom: 20px;
+}
+
+/* Estilo para la imagen del logo */
 .homepage-logo {
     margin-bottom: 20px;
-    text-align: center;
 }
 
 .homepage-logo img {
-    width: 150px;
+    width: 230px;
     height: auto;
 }
-
+.homepage-logo h1{
+    font-size: 43px;
+    font-family: 'Alegreya Sans', sans-serif;  /* Asegura que la fuente Alegreya Sans se aplica aquí */
+    letter-spacing: 1px;
+    line-height: 1.1;
+    font-weight: bold;
+}
+/* Estilo del texto en la página */
 .homepage-text {
     text-align: center;
-    color: #ffffff;
-    font-family: 'Alegreya Sans', sans-serif;
+    font-family: 'Alegreya Sans', sans-serif;  /* Asegura que Alegreya Sans se aplica aquí */
     font-weight: bold;
 }
 
-.homepage-text h1 {
-    font-size: 43px; /* Ajuste para el tamaño de RespawnChatter */
-}
-
 .homepage-text p {
-    font-size: 24px; /* Ajuste para el tamaño del texto */
+    font-size: 20px; /* Ajuste para el tamaño del texto */
+    margin: 0;
+    padding: 10px 0; /* Añade un pequeño relleno vertical */
 }
 
 /* Estilos del contenedor del botón */
 .homepage-button {
-    position: absolute;  /* Posiciona el contenedor del botón de forma absoluta */
-    top: 20px;  /* Distancia desde la parte superior */
-    right: 20px;  /* Distancia desde la parte derecha */
+    position: absolute;
+    top: 20px;
+    right: 20px;
 }
 
 /* Estilos del botón login */
 .login-button {
     background-color: #99B45C;
     color: #ffffff;
-    width: 180px;  /* Ancho del botón */
-    height: 65px;  /* Alto del botón */
+    width: 180px;
+    height: 65px;
     border: none;
-    border-radius: 40px;  /* Radio de las esquinas */
-    font-family: 'Raleway', sans-serif;
+    border-radius: 40px;
+    font-family: 'Raleway', sans-serif;  /* Se usa Raleway para el texto del botón */
     font-weight: 800;
-    font-size: 16px;
-    text-align: center;  /* Alineación del texto dentro del botón */
+    font-size: 14px;
+    text-align: center;
     display: flex;
-    justify-content: center;  /* Centrado horizontal del texto */
-    align-items: center;  /* Centrado vertical del texto */
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.9), 0 -4px 10px rgba(0, 0, 0, 0.9);
 }
 
 .login-button:hover {
