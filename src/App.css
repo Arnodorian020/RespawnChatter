@@ -1,8 +1,4 @@
 /* Estilos específicos de la app */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 .App {
   text-align: center;
 }
