@@ -1,43 +1,66 @@
 /* /styles/pages/HomePage.css */
 .homepage {
-    position: relative;
+    position: relative;  /* Asegura que los elementos posicionados dentro de este contenedor se posicionen en relación con él */
     height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     background-image: url('../../assets/images/3433329 1.png');
     background-size: cover;
-  }
-  
-  .homepage-logo {
-    margin: 0 auto;
+    background-position: center;
+}
+
+.homepage-logo {
+    margin-bottom: 20px;
     text-align: center;
-    padding-top: 20px;
-  }
-  
-  .homepage-logo img {
+}
+
+.homepage-logo img {
     width: 150px;
     height: auto;
-  }
-  
-  .homepage-text {
+}
+
+.homepage-text {
     text-align: center;
     color: #ffffff;
-    font-size: 2rem;
-    margin-top: 20px;
-  }
-  
-  .login-button {
-    position: absolute;
-    top: 20px;
-    right: 20px;
+    font-family: 'Alegreya Sans', sans-serif;
+    font-weight: bold;
+}
+
+.homepage-text h1 {
+    font-size: 43px; /* Ajuste para el tamaño de RespawnChatter */
+}
+
+.homepage-text p {
+    font-size: 24px; /* Ajuste para el tamaño del texto */
+}
+
+/* Estilos del contenedor del botón */
+.homepage-button {
+    position: absolute;  /* Posiciona el contenedor del botón de forma absoluta */
+    top: 20px;  /* Distancia desde la parte superior */
+    right: 20px;  /* Distancia desde la parte derecha */
+}
+
+/* Estilos del botón login */
+.login-button {
     background-color: #99B45C;
     color: #ffffff;
-    padding: 10px 20px;
+    width: 200px;  /* Ancho del botón */
+    height: 60px;  /* Alto del botón */
     border: none;
-    border-radius: 20px;
+    border-radius: 40px;  /* Radio de las esquinas */
+    font-family: 'Raleway', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    text-align: center;  /* Alineación del texto dentro del botón */
+    display: flex;
+    justify-content: center;  /* Centrado horizontal del texto */
+    align-items: center;  /* Centrado vertical del texto */
     cursor: pointer;
-    font-size: 1rem;
-  }
-  
-  .login-button:hover {
+}
+
+.login-button:hover {
     background-color: #86a24e;
-  }
-  
+}
