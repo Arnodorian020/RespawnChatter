@@ -1,12 +1,12 @@
-// src/components/CommentCard.js
-
 import React, { useState } from 'react';
 import { ArrowBigDown, ArrowBigUp, MessageSquare, X, ChevronDown, ChevronUp } from 'lucide-react';
+import EditableContent from './EditableContent';
 
-export default function CommentCard({ comment, onAddReply, onVote }) {
+export default function CommentCard({ comment, onAddReply, onVote, onUpdateComment, onUpdateReply }) {
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState('');
   const [showReplies, setShowReplies] = useState(true);
+  const [editingReplyId, setEditingReplyId] = useState(null);
 
   const handleSubmitReply = (e) => {
     e.preventDefault();
@@ -18,7 +18,15 @@ export default function CommentCard({ comment, onAddReply, onVote }) {
     }
   };
 
-  // Asegúrate de que comment.replies sea un array
+  const handleSaveComment = (newContent) => {
+    onUpdateComment(comment._id, newContent);
+  };
+
+  const handleSaveReply = (replyId, newContent) => {
+    onUpdateReply(replyId, newContent);
+    setEditingReplyId(null);
+  };
+
   const replies = comment.replies || [];
 
   const formatDate = (date) => {
@@ -57,7 +65,7 @@ export default function CommentCard({ comment, onAddReply, onVote }) {
               <span className="font-medium text-sm text-gray-900">{comment.author}</span>
               <span className="text-xs text-gray-500">{formatDate(comment.createdAt)}</span>
             </div>
-            <p className="text-gray-800 mb-3">{comment.content}</p>
+            <EditableContent content={comment.content} onSave={handleSaveComment} />
 
             <div className="flex items-center gap-4">
               <button
@@ -163,7 +171,10 @@ export default function CommentCard({ comment, onAddReply, onVote }) {
                     <span className="font-medium text-sm text-gray-900">{reply.author}</span>
                     <span className="text-xs text-gray-500">{formatDate(reply.createdAt)}</span>
                   </div>
-                  <p className="text-gray-800 text-sm">{reply.content}</p>
+                  <EditableContent
+                    content={reply.content}
+                    onSave={(newContent) => handleSaveReply(reply._id.$oid, newContent)}
+                  />
                 </div>
               </div>
             </div>

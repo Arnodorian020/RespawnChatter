@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CommentCard from './CommentCard';
-import { ArrowBigDown, ArrowBigUp, MessageSquare } from 'lucide-react';
+import { ArrowBigDown, ArrowBigUp, MessageSquare, Pencil } from 'lucide-react';
 
-export default function Post({ post, onAddComment, onVotePost, onVoteComment, onAddReply }) {
-  const [commentContent, setCommentContent] = React.useState('');
+export default function PostComponent({ post, onAddComment, onVotePost, onVoteComment, onAddReply, onUpdatePost, onUpdateComment, onUpdateReply }) {
+  const [commentContent, setCommentContent] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editPost, setEditPost] = useState({ title: post.title, content: post.content, tags: post.tags.join(', ') });
 
   const handleSubmitComment = (e) => {
     e.preventDefault();
@@ -13,41 +15,88 @@ export default function Post({ post, onAddComment, onVotePost, onVoteComment, on
     }
   };
 
+  const handleUpdatePost = (e) => {
+    e.preventDefault();
+    onUpdatePost({
+      ...post,
+      title: editPost.title.trim(),
+      content: editPost.content.trim(),
+      tags: editPost.tags.split(',').map(tag => tag.trim())
+    });
+    setIsEditing(false);
+  };
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <div className="flex gap-4">
-          <div className="flex flex-col items-center gap-1">
-            <button
-              onClick={() => onVotePost('up')}
-              className="text-gray-500 hover:text-orange-500 transition-colors"
-            >
-              <ArrowBigUp size={24} />
-            </button>
-            <span className="font-medium text-lg">{post.votes}</span>
-            <button
-              onClick={() => onVotePost('down')}
-              className="text-gray-500 hover:text-blue-500 transition-colors"
-            >
-              <ArrowBigDown size={24} />
-            </button>
-          </div>
-
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">{post.title}</h1>
+        {isEditing ? (
+          <form onSubmit={handleUpdatePost}>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">Title</label>
+              <input
+                type="text"
+                value={editPost.title}
+                onChange={(e) => setEditPost({ ...editPost, title: e.target.value })}
+                className="w-full p-3 border border-gray-300 rounded-lg"
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">Content</label>
+              <textarea
+                value={editPost.content}
+                onChange={(e) => setEditPost({ ...editPost, content: e.target.value })}
+                className="w-full p-3 border border-gray-300 rounded-lg"
+                rows={5}
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">Tags</label>
+              <input
+                type="text"
+                value={editPost.tags}
+                onChange={(e) => setEditPost({ ...editPost, tags: e.target.value })}
+                className="w-full p-3 border border-gray-300 rounded-lg"
+                required
+              />
+            </div>
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setIsEditing(false)}
+                className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-3 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+              >
+                Update Post
+              </button>
+            </div>
+          </form>
+        ) : (
+          <>
+            <div className="flex justify-between">
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">{post.title}</h1>
+              <button onClick={() => setIsEditing(true)} className="text-gray-500 hover:text-blue-500 transition-colors">
+                <Pencil size={24} />
+              </button>
+            </div>
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
               <span>Posted by {post.author}</span>
               <span>•</span>
               <span>{post.timestamp}</span>
             </div>
             <p className="text-gray-800 text-lg mb-4">{post.content}</p>
-
             <div className="flex items-center gap-2 text-gray-500">
               <MessageSquare size={20} />
               <span>{post.comments.length} comments</span>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
 
       <div className="mb-6">
@@ -78,6 +127,8 @@ export default function Post({ post, onAddComment, onVotePost, onVoteComment, on
             comment={comment}
             onAddReply={(replyContent) => onAddReply(post._id, comment._id, replyContent)}
             onVote={(direction) => onVoteComment(post._id, comment._id, direction)}
+            onUpdateComment={(commentId, newContent) => onUpdateComment(commentId, newContent)}
+            onUpdateReply={(replyId, newContent) => onUpdateReply(replyId, newContent)}
           />
         ))}
       </div>
