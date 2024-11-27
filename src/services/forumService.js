@@ -16,8 +16,6 @@ async function fetchPostById(postId) {
   return response.json();
 }
 
-// src/services/api.js
-
 async function fetchCommentById(commentId) {
   const response = await fetch(`${API_URL}/comments/${commentId}`);
   if (!response.ok) {
@@ -76,4 +74,18 @@ async function votePost(postId, direction) {
   return response.json();
 }
 
-export { fetchPosts, fetchPostById, fetchAllCommentsByPost, createComment, createReply, votePost };
+async function createPost(title, content, tags) {
+  const response = await fetch(`${API_URL}/posts`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ title, content, tags }),
+  });
+  if (!response.ok) {
+    throw new Error('Error al crear el post');
+  }
+  return response.json();
+}
+
+export { fetchPosts, fetchPostById, fetchAllCommentsByPost, createComment, createReply, votePost, createPost };

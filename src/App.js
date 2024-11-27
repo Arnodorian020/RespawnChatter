@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import PostsList from './components/PostsList';
 import PostComponent from './components/Post';
-import { fetchPosts, fetchPostById, fetchAllCommentsByPost, createComment, createReply, votePost } from './services/forumService';
+import CreatePost from './components/CreatePost'; // Importar el nuevo componente
+import { fetchPosts, fetchPostById, fetchAllCommentsByPost, createComment, createReply, votePost, createPost } from './services/forumService';
 
 function App() {
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [posts, setPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [isCreatingPost, setIsCreatingPost] = useState(false); // Estado para manejar la creación de posts
 
   useEffect(() => {
     const getPosts = async () => {
@@ -80,6 +82,16 @@ function App() {
     }
   };
 
+  const handleCreatePost = async (newPost) => {
+    try {
+      const createdPost = await createPost(newPost.title, newPost.content, newPost.tags);
+      setPosts((prev) => [createdPost, ...prev]);
+      setIsCreatingPost(false);
+    } catch (error) {
+      console.error('Error creating post:', error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white shadow-sm sticky top-0 z-10">
@@ -102,7 +114,21 @@ function App() {
       </header>
 
       <main className="max-w-5xl mx-auto px-4 py-6">
-        {selectedPost ? (
+        {!selectedPostId && !isCreatingPost && (
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-semibold text-gray-900">Recent Discussions</h2>
+            <button
+              onClick={() => setIsCreatingPost(true)}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              + Create Post
+            </button>
+          </div>
+        )}
+
+        {isCreatingPost ? (
+          <CreatePost onCreatePost={handleCreatePost} onClose={() => setIsCreatingPost(false)} />
+        ) : selectedPost ? (
           <PostComponent
             post={selectedPost}
             onAddComment={(content) => addComment(selectedPost._id, content)}
