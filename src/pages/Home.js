@@ -20,8 +20,8 @@ const Home = () => {
     <div className="homepage">
       <div className="homepage-text-container"> {/* Contenedor con fondo oscuro */}
         <div className="homepage-logo">
-            <h1>Respawn<br />Chatter</h1>
-            <img src={logo} alt="RespawnChatter Logo" />
+          <h1>Respawn<br />Chatter</h1>
+          <img src={logo} alt="RespawnChatter Logo" />
         </div>
         <div className="homepage-text">
           <p>¡Sé parte de esta comunidad y descubre grandes juegos!</p>
