@@ -1,0 +1,22 @@
+#background-container {
+    background-image: url('../assets/images/3433329\ 1.png'); /* Ajusta la ruta */
+    background-size: cover;  /* Asegura que la imagen cubra toda la pantalla */
+  background-position: absolute;  /* Centra la imagen */
+  background-attachment: fixed; /* Hace que la imagen se mantenga fija mientras se desplaza la página */
+  height: 100%;  /* Asegura que la imagen cubra toda la altura de la pantalla */
+  min-height: 100vh;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;  
+  position: relative;
+  box-sizing: border-box;
+}
+
+body, html {
+  margin: 0; /* Elimina espacios globales */
+  padding: 0;
+  min-height: 100vh;
+  overflow-y: scroll;
+  overflow-x: hidden; /* Evita desplazamiento horizontal */
+}
