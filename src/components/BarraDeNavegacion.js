@@ -16,7 +16,8 @@ const BarraDeNavegacion = () => {
                         <ul className="navbar-list">
                             <li><Link to="/profile" className="navbar-item">Perfil</Link></li>
                             <li><Link to="/forum" className="navbar-item">Foro de discusión</Link></li>
-                            <li><Link to="/mostrarJuegos" className="navbar-item">Emulador de Video Juegos</Link></li>
+                            <li><Link to="/" className="navbar-item">Emulador de Video Juegos</Link></li>
+                            <li><Link to="/mostrarJuegos" className="navbar-item">Lista de Juegos</Link></li>
                             <li><Link to="/news" className="navbar-item">Novedades</Link></li>
                             <li><Link to="/misReseñas" className="navbar-item">Mis Reseñas</Link></li>
                         </ul>
