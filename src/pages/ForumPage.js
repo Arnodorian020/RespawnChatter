@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Importar useNavigate
+import { useAuth0 } from "@auth0/auth0-react";
 import PostsList from '../components/forum/PostsList';
 import CreatePost from '../components/forum/CreatePost';
 import { fetchPosts, createPost } from '../services/forumService';
+import { useNavigate } from 'react-router-dom';
 
 export default function ForumPage() {
   const [posts, setPosts] = useState([]);
   const [isCreatingPost, setIsCreatingPost] = useState(false);
-  const navigate = useNavigate(); // Usar useNavigate aquí
+  const { user } = useAuth0(); // Obtener el usuario autenticado
+  const navigate = useNavigate(); // Usar useNavigate para la navegación
 
   useEffect(() => {
     const getPosts = async () => {
@@ -24,16 +26,14 @@ export default function ForumPage() {
 
   const handleCreatePost = async (newPost) => {
     try {
-      const createdPost = await createPost(newPost.title, newPost.content, newPost.tags);
+      const createdPost = await createPost(newPost);
       setPosts((prev) => [createdPost, ...prev]);
       setIsCreatingPost(false);
+      // Navegar a la URL con el nombre del usuario como parámetro
+      navigate(`/post/${createdPost._id}?username=${user.name}`);
     } catch (error) {
       console.error('Error creating post:', error);
     }
-  };
-
-  const handlePostClick = (postId) => {
-    navigate(`/post/${postId}`); // Navegar al post específico
   };
 
   return (
@@ -53,7 +53,7 @@ export default function ForumPage() {
       {isCreatingPost ? (
         <CreatePost onCreatePost={handleCreatePost} onClose={() => setIsCreatingPost(false)} />
       ) : (
-        <PostsList posts={posts} onPostClick={handlePostClick} />
+        <PostsList posts={posts} onPostClick={(postId) => navigate(`/post/${postId}`)} />
       )}
     </main>
   );
