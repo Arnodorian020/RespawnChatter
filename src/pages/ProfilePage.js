@@ -11,12 +11,11 @@ const ProfilePage = () => {
     console.log(isAuthenticated);
   
     useEffect(() => {
-      console.log("user:", user);
-      console.log("isAuthenticated:", isAuthenticated);
-  
-      const sendUserDataToBackend = async () => {
+      const sendUserDataToBackend = async () => {       
         if(!isLoading) {
           try {
+            console.log("user:", user);
+            console.log("isAuthenticated:", isAuthenticated);
             const token = await getIdTokenClaims();
   
             console.log("El token es: ", token);
@@ -29,6 +28,8 @@ const ProfilePage = () => {
   
             console.log("La data del usuario es:", userData);
   
+            console.log("El token es: ", token.__raw);
+
             await axios.get('http://localhost:3000/auth/profile', {
               headers: {
                 Authorization: `Bearer ${token.__raw}`,
@@ -43,11 +44,12 @@ const ProfilePage = () => {
         }
       };
   
+      console.log(isAuthenticated);
       // Ejecutamos el envío solo si está autenticado
       if (isAuthenticated) {
         sendUserDataToBackend();
       }
-    }, [isAuthenticated, user, getIdTokenClaims]); // Dependencias
+    }, [isLoading, isAuthenticated, user, getIdTokenClaims]); // Dependencias
     
 
     if (isLoading) {

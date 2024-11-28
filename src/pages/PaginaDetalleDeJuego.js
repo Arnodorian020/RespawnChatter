@@ -238,13 +238,6 @@ const PaginaDetalleDeJuego = () => {
           setModalContentVisible(true);
           throw new Error('El contenido tiene un tono inapropiado.');
         }
-        
-        // Opcionalmente puedes agregar un umbral mínimo de magnitud para evitar textos ambiguos (por ejemplo, con poca emoción)
-        if (sentimentMagnitude < 0.1) {
-          console.log('Contenido con baja magnitud de sentimiento, puede ser neutral o poco significativo');
-          setModalContentVisible(true);
-          throw new Error('El contenido tiene un tono neutral o poco significativo.');
-        }
   
         console.log('Contenido adecuado para publicar.');
   
@@ -358,13 +351,6 @@ const PaginaDetalleDeJuego = () => {
           console.log('Contenido inapropiado detectado: sentimiento excesivamente negativo o positivo');
           setModalContentVisible(true);
           throw new Error('El contenido tiene un tono inapropiado.');
-        }
-        
-        // Opcionalmente puedes agregar un umbral mínimo de magnitud para evitar textos ambiguos (por ejemplo, con poca emoción)
-        if (sentimentMagnitude < 0.1) {
-          console.log('Contenido con baja magnitud de sentimiento, puede ser neutral o poco significativo');
-          setModalContentVisible(true);
-          throw new Error('El contenido tiene un tono neutral o poco significativo.');
         }
   
         console.log('Contenido adecuado para publicar.');

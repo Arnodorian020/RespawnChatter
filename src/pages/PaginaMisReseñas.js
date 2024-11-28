@@ -29,7 +29,9 @@ const PaginaMisResenas = () => {
         
         const userResponse = await fetch(`http://localhost:3000/users/${user.email}`);
         
-       if(!userResponse.ok){
+        console.log(user.email);
+       
+        if(!userResponse.ok){
           throw new Error("Error al obtener el usuario");
         }
 

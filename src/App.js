@@ -14,6 +14,7 @@ import PaginaEditarResena from './pages/PaginaEditarReseña';
 import PaginaMostrarJuegos from './pages/PaginaMostrarJuegos';
 import PaginaDetalleDeJuego from './pages/PaginaDetalleDeJuego';
 import BarraDeNavegacion from './components/BarraDeNavegacion.js';
+import PostPage from './pages/PostPage.js';
 
 function App() {
 
@@ -43,6 +44,7 @@ function App() {
               <Route path="/test" element={<TestPage />} />
               <Route path="*" element={<NotFound />} />
               <Route path="/mostrarJuegos" element={<PaginaMostrarJuegos />} />
+              <Route path="/forum" element = {<PostPage />} />
               <Route path="/mostrarJuegos/:gameId" element={<PaginaDetalleDeJuego />} />
               <Route path='/misReseñas' element={<PaginaMisResenas/>}/>
               <Route path='/editarReseña/:reviewId' element={<PaginaEditarResena/>}/>
