@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ConfirmModal from "../components/ConfirmModal";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/BackgroundImage.css";
-
+import { useAuth0 } from "@auth0/auth0-react";
 
 const PaginaMisResenas = () => {
   const [reviews, setReviews] = useState([]);
@@ -12,40 +12,44 @@ const PaginaMisResenas = () => {
   const [sortBy, setSortBy] = useState("none"); // Estado inicial "Ninguno"
   const [modalData, setModalData] = useState({ show: false, reviewId: null, action: null });
   const navigate = useNavigate();
+  const [userId, setUserId] = useState(null); // Para almacenar el ID del usuario
 
-  const token = localStorage.getItem("authToken"); // Obtener el token activo (o desde contexto)
 
-  // Decodificar el token para obtener el ID del usuario
-  const getUserIdFromToken = (token) => {
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1])); // Decodifica el payload del JWT
-      return payload.userId; // Ajustar según la estructura del token
-    } catch (error) {
-      console.error("Error al decodificar el token:", error);
-      return null;
-    }
-  };
+  const { user, isAuthenticated, isLoading } = useAuth0();
 
-  const userId = getUserIdFromToken(token); // Obtén el ID del usuario
+  console.log("El usuario autenticado es: ", user);
 
   // Simula el llamado a la API
   useEffect(() => {
-    const fetchReviews = async () => {
-      if (!userId) {
-        console.error("No se pudo obtener el ID del usuario. Verifica el token.");
+    const fetchUserAndReviews = async () => {
+      
+      console.log(isLoading);
+      
+      if (!isAuthenticated || !user) {
+        console.error("El usuario no está autenticado o los datos del usuario no están disponibles.");
         return;
       }
 
       try {
         setLoading(true);
-
-        // Llamada a la API con token y ID del usuario
-        const response = await fetch(`http://localhost:3000/reviews/user/${userId}`, {
         
-          headers: {
-            Authorization: `Bearer ${token}`, // Enviar el token en el encabezado
-          },
-        });
+       if(isLoading){
+
+       }
+       else 
+       {
+        const userResponse = await fetch(`http://localhost:3000/users/${user.email}`);
+        
+       if(!userResponse.ok){
+          throw new Error("Error al obtener el usuario");
+        }
+
+        console.log(user.email);
+
+        const fetchedUser = await userResponse.json();
+        setUserId(fetchedUser._id);
+        
+        const response = await fetch(`http://localhost:3000/reviews/user/${userId}`);
 
         if (!response.ok) {
           throw new Error("Error al obtener las reseñas");
@@ -57,6 +61,7 @@ const PaginaMisResenas = () => {
 
         setReviews(data);
         setOriginalReviews(data); // Guarda el orden original
+      }
       } catch (error) {
         console.error("Error al llamar a la API:", error);
         setReviews([]);
@@ -66,8 +71,10 @@ const PaginaMisResenas = () => {
       }
     };
 
-    fetchReviews();
-  }, [userId, token]);
+    if(isAuthenticated){
+    fetchUserAndReviews();
+    }
+  }, [userId, isLoading, isAuthenticated]);
 
   const handleSortChange = (e) => {
     setSortBy(e.target.value);
@@ -89,19 +96,12 @@ const PaginaMisResenas = () => {
       setModalData({ ...modalData, show: false });
       const response = await fetch(`http://localhost:3000/reviews/${modalData.reviewId}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       });
       if (!response.ok) {
         throw new Error("Error al eliminar la reseña");
       }
       // Después de eliminar la reseña, recargar la lista de reseñas
-    const updatedReviewsResponse = await fetch(`http://localhost:3000/reviews/user/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const updatedReviewsResponse = await fetch(`http://localhost:3000/reviews/user/${userId}`);
 
     if (!updatedReviewsResponse.ok) {
       throw new Error("Error al obtener las reseñas actualizadas");

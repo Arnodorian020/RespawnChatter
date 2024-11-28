@@ -5,6 +5,8 @@ import ReplyModal from "../components/ReplyModal";
 import axios from "axios";
 import InappropriateContentModal from "../components/InnapropiateContentModal";
 import "../styles/BackgroundImage.css";
+import { useAuth0 } from "@auth0/auth0-react";
+
 
 const PaginaDetalleDeJuego = () => {
   const [game, setGame] = useState(null);
@@ -20,32 +22,38 @@ const PaginaDetalleDeJuego = () => {
   const [isReplyingToReview, setIsReplyingToReview] = useState(false); // ¿Respondiendo a una reseña o respuesta?
   const [parentReviewId, setParentReviewId] = useState(null);
   const [modalcontentVisible, setModalContentVisible] = useState(false);
+  const [userId, setUserId] = useState(null);
 
 
-  const token = localStorage.getItem("authToken");
-
-  const getUserIdFromToken = (token) => {
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      return payload.userId;
-    } catch (error) {
-      console.error("Error al decodificar el token:", error);
-      return null;
-    }
-  };
-
-  const userId = getUserIdFromToken(token);
+  const { user, isAuthenticated, isLoading } = useAuth0();
 
   useEffect(() => {
+    
     const fetchGameDetails = async () => {
       try {
-        setLoading(true);
+        
+        if (!isLoading && isAuthenticated) {
+          // Ahora puedes usar `user` o llamar a APIs
+          console.log("Usuario autenticado:", user);
+                
+        const userResponse = await fetch(`http://localhost:3000/users/${user.email}`);
+        if(!userResponse.ok){
+          throw new Error("Error al obtener el usuario");
+        }
+
+        console.log(user.email);
+
+        const fetchedUser = await userResponse.json();
+        setUserId(fetchedUser._id);
+
+        
         const response = await fetch(`http://localhost:3000/games/${gameId}`);
         if (!response.ok) {
           throw new Error("Error al obtener los detalles del juego");
         }
         const data = await response.json();
         setGame(data);
+      }
       } catch (error) {
         console.error("Error al cargar los detalles del juego:", error);
       } finally {
@@ -55,20 +63,24 @@ const PaginaDetalleDeJuego = () => {
 
     const fetchReviews = async () => {
       try {
+        if(!isLoading && isAuthenticated){
         const response = await fetch(`http://localhost:3000/reviews/game/${gameId}`);
         if (!response.ok) {
           throw new Error("Error al obtener las reviews del juego");
         }
         const data = await response.json();
         setReviews(data);
+      }
       } catch (error) {
         console.error("Error al cargar las reviews del juego:", error);
       }
     };
 
-    fetchGameDetails();
-    fetchReviews();
-  }, [gameId]);
+    if(isAuthenticated){
+      fetchGameDetails();
+      fetchReviews();
+    }
+  }, [gameId, isLoading, isAuthenticated]);
 
   const renderResponses = (responsesData, depth = 0) => {
     return responsesData.map((response) => (
@@ -125,6 +137,8 @@ const PaginaDetalleDeJuego = () => {
     // Cargar las respuestas para cada review cuando se obtienen las reviews
     const fetchResponses = async (reviewId) => {
       try {
+        if(!isLoading && isAuthenticated)
+        {
         const response = await fetch(`http://localhost:3000/responses?parentReviewId=${reviewId}`);
         console.log("Esta es la review id para las respuestas", reviewId);
         if (!response.ok) {
@@ -136,6 +150,7 @@ const PaginaDetalleDeJuego = () => {
           ...prevResponses,
           [reviewId]: data, // Guardar las respuestas bajo el ID de la review
         }));
+      }
       } catch (error) {
         console.error("Error al cargar las respuestas de la review:", error);
       }
@@ -144,12 +159,13 @@ const PaginaDetalleDeJuego = () => {
     reviews.forEach((review) => {
       fetchResponses(review._id);
     });
-  }, [reviews]);
+  }, [reviews, isLoading, isAuthenticated]);
 
   useEffect(() => {
     // Función para cargar datos adicionales para cada respuesta
     const fetchAdditionalData = async (responseId) => {
       try {
+        if(!isLoading && isAuthenticated){
         const response = await fetch(`http://localhost:3000/responses?parentResponseId=${responseId}`);
         console.log("Esta es la id de respuesta: ", responseId);
         if (!response.ok) {
@@ -171,6 +187,7 @@ const PaginaDetalleDeJuego = () => {
             fetchAdditionalData(additionalResponse._id);
           }
         });
+      }
       } catch (error) {
         console.error("Error al cargar los datos adicionales para la respuesta:", error);
       }
@@ -216,7 +233,7 @@ const PaginaDetalleDeJuego = () => {
         const sentimentMagnitude = response1.data.documentSentiment.magnitude;
   
         // Establecer un umbral para la moderación, por ejemplo, si el puntaje es menor que -0.5 o mayor que 0.5
-        if (sentimentScore < -0.5 || sentimentScore > 0.5) {
+        if (sentimentScore < -0.5) {
           console.log('Contenido inapropiado detectado: sentimiento excesivamente negativo o positivo');
           setModalContentVisible(true);
           throw new Error('El contenido tiene un tono inapropiado.');
@@ -337,7 +354,7 @@ const PaginaDetalleDeJuego = () => {
         const sentimentMagnitude = response.data.documentSentiment.magnitude;
   
         // Establecer un umbral para la moderación, por ejemplo, si el puntaje es menor que -0.5 o mayor que 0.5
-        if (sentimentScore < -0.5 || sentimentScore > 0.5) {
+        if (sentimentScore < -0.5) {
           console.log('Contenido inapropiado detectado: sentimiento excesivamente negativo o positivo');
           setModalContentVisible(true);
           throw new Error('El contenido tiene un tono inapropiado.');
@@ -383,6 +400,10 @@ const PaginaDetalleDeJuego = () => {
   };
   
 
+  if(isLoading)
+  {
+    return <div>Cargando...</div>;
+  }
 
 
   return (

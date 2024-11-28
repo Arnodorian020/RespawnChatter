@@ -2,10 +2,53 @@ import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Link } from "react-router-dom"; // Importa Link para la navegación
 import { LogoutButton } from "../components/Auth/Logout";
+import { useEffect } from "react";
+import axios from "axios";
 import "../styles/pages/ProfilePage.css"; // Importa los estilos CSS
 
 const ProfilePage = () => {
-    const { user, isAuthenticated, isLoading } = useAuth0();
+    const { user, isAuthenticated, getIdTokenClaims, isLoading } = useAuth0();
+    console.log(isAuthenticated);
+  
+    useEffect(() => {
+      console.log("user:", user);
+      console.log("isAuthenticated:", isAuthenticated);
+  
+      const sendUserDataToBackend = async () => {
+        if(!isLoading) {
+          try {
+            const token = await getIdTokenClaims();
+  
+            console.log("El token es: ", token);
+  
+            const userData = {
+              email: user.email,
+              username: user.nickname,
+              createdAt: user.updated_at,  // O el campo que necesites
+            };
+  
+            console.log("La data del usuario es:", userData);
+  
+            await axios.get('http://localhost:3000/auth/profile', {
+              headers: {
+                Authorization: `Bearer ${token.__raw}`,
+              },
+              params: userData,
+            });
+        
+            console.log("Datos del usuario enviados correctamente al backend");
+          } catch (error) {
+            console.error("Error al enviar los datos del usuario al backend", error);
+          }
+        }
+      };
+  
+      // Ejecutamos el envío solo si está autenticado
+      if (isAuthenticated) {
+        sendUserDataToBackend();
+      }
+    }, [isAuthenticated, user, getIdTokenClaims]); // Dependencias
+    
 
     if (isLoading) {
         return <div>Loading...</div>;
