@@ -1,11 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import PostComponent from '../components/Post';
+import { useParams, useNavigate } from 'react-router-dom'; // Importa useNavigate
+import PostComponent from '../components/forum/Post';
 import { fetchPostById, fetchAllCommentsByPost, createComment, createReply, votePost } from '../services/forumService';
 
-export default function PostPage({ postId, onBack }) {
+export default function PostPage() {
+  const { postId } = useParams(); // Extrae el postId de los parámetros de la URL
+  const navigate = useNavigate(); // Usa useNavigate para la navegación
+  console.log('Post ID in PostPage component:', postId); // Log para verificar el valor del postId
+
   const [selectedPost, setSelectedPost] = useState(null);
 
   useEffect(() => {
+    if (!postId) {
+      console.error('Post ID is undefined or null', postId);
+      return;
+    }
     const getPostDetails = async () => {
       try {
         const post = await fetchPostById(postId);
@@ -59,6 +68,10 @@ export default function PostPage({ postId, onBack }) {
     }
   };
 
+  const handleBack = () => {
+    navigate('/forum'); // Navega de regreso a la página del foro
+  };
+
   if (!selectedPost) {
     return <div>Loading...</div>;
   }
@@ -67,7 +80,7 @@ export default function PostPage({ postId, onBack }) {
     <main className="max-w-5xl mx-auto px-4 py-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold text-gray-900">Details</h2>
-        <button onClick={onBack} className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900">
+        <button onClick={handleBack} className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900">
           ← Back to Posts
         </button>
       </div>

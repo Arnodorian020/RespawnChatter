@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import PostsList from '../components/PostsList';
-import CreatePost from '../components/CreatePost';
+import { useNavigate } from 'react-router-dom'; // Importar useNavigate
+import PostsList from '../components/forum/PostsList';
+import CreatePost from '../components/forum/CreatePost';
 import { fetchPosts, createPost } from '../services/forumService';
 
-export default function ForumPage({ onPostClick }) {
+export default function ForumPage() {
   const [posts, setPosts] = useState([]);
   const [isCreatingPost, setIsCreatingPost] = useState(false);
+  const navigate = useNavigate(); // Usar useNavigate aquí
 
   useEffect(() => {
     const getPosts = async () => {
@@ -30,6 +32,10 @@ export default function ForumPage({ onPostClick }) {
     }
   };
 
+  const handlePostClick = (postId) => {
+    navigate(`/post/${postId}`); // Navegar al post específico
+  };
+
   return (
     <main className="max-w-5xl mx-auto px-4 py-6">
       {!isCreatingPost && (
@@ -47,7 +53,7 @@ export default function ForumPage({ onPostClick }) {
       {isCreatingPost ? (
         <CreatePost onCreatePost={handleCreatePost} onClose={() => setIsCreatingPost(false)} />
       ) : (
-        <PostsList posts={posts} onPostClick={onPostClick} />
+        <PostsList posts={posts} onPostClick={handlePostClick} />
       )}
     </main>
   );

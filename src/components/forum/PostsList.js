@@ -1,8 +1,6 @@
-// src/components/PostsList.js
-
 import React from "react";
 import { MessageSquare, ArrowBigUp, Eye, Tag } from "lucide-react";
-import { formatTimeAgo } from "../utils/dateUtils";
+import { formatTimeAgo } from "../../utils/dateUtils";
 
 export default function PostsList({ posts, onPostClick }) {
   return (
