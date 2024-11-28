@@ -419,9 +419,6 @@ const PaginaDetalleDeJuego = () => {
             </div>
             <div className="card-body px-5 py-4">
               <p className="card-text fs-5">
-                <span className="text-warning fw-bold">Desarrollador:</span> {game.developer}
-              </p>
-              <p className="card-text fs-5">
                 <span className="text-warning fw-bold">Año de lanzamiento:</span> {game.releaseYear}
               </p>
               <p className="card-text fs-5">
@@ -519,7 +516,7 @@ const PaginaDetalleDeJuego = () => {
             </div>
           ))
         ) : (
-          <p>No hay reseñas disponibles para este juego.</p>
+          <p className="text-white">No hay reseñas disponibles para este juego.</p>
         )}
       </div>
 

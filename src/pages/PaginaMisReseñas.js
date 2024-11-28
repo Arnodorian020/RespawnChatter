@@ -117,7 +117,6 @@ const PaginaMisResenas = () => {
   };
 
   return (
-    
     <div id="background-container" >
     <div className="container my-5">
       <header className="d-flex justify-content-between align-items-center mb-4">
