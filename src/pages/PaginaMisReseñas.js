@@ -23,21 +23,10 @@ const PaginaMisResenas = () => {
   useEffect(() => {
     const fetchUserAndReviews = async () => {
       
-      console.log(isLoading);
-      
-      if (!isAuthenticated || !user) {
-        console.error("El usuario no está autenticado o los datos del usuario no están disponibles.");
-        return;
-      }
+      if(!isLoading && isAuthenticated){
 
       try {
-        setLoading(true);
         
-       if(isLoading){
-
-       }
-       else 
-       {
         const userResponse = await fetch(`http://localhost:3000/users/${user.email}`);
         
        if(!userResponse.ok){
@@ -48,6 +37,8 @@ const PaginaMisResenas = () => {
 
         const fetchedUser = await userResponse.json();
         setUserId(fetchedUser._id);
+
+        console.log(userId);
         
         const response = await fetch(`http://localhost:3000/reviews/user/${userId}`);
 
@@ -61,7 +52,7 @@ const PaginaMisResenas = () => {
 
         setReviews(data);
         setOriginalReviews(data); // Guarda el orden original
-      }
+      
       } catch (error) {
         console.error("Error al llamar a la API:", error);
         setReviews([]);
@@ -69,6 +60,7 @@ const PaginaMisResenas = () => {
       } finally {
         setLoading(false);
       }
+    }
     };
 
     if(isAuthenticated){
