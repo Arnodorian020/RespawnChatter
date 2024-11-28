@@ -1,11 +1,21 @@
-const API_URL = 'http://localhost:3001';
+const API_URL = 'http://localhost:3000';
 
 async function fetchPosts() {
-  const response = await fetch(`${API_URL}/posts`);
-  if (!response.ok) {
-    throw new Error('Error al obtener los posts');
+  try {
+    const response = await fetch(`${API_URL}/posts`);
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('La respuesta no es un json')
+    }
+    const data = await response.json()
+    if (!Array.isArray(data)) {
+      throw new Error('La respuesta no es un array');
+    }
+    return data;
+  } catch (error) {
+    console.error('error al obtener los post', error.message)
+    return [];
   }
-  return response.json();
 }
 
 async function fetchPostById(postId) {

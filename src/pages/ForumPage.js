@@ -17,7 +17,8 @@ export default function ForumPage() {
         const data = await fetchPosts();
         setPosts(data);
       } catch (error) {
-        console.error('Error fetching posts:', error);
+        console.error('Error fetching posts:', error.message);
+        setPosts([])
       }
     };
 
