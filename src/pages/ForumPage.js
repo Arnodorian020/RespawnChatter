@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import PostsList from '../components/PostsList';
-import CreatePost from '../components/CreatePost';
+import PostsList from '../components/forum/PostsList'
+import CreatePost from '../components/forum/CreatePost';
 import { fetchPosts, createPost } from '../services/forumService';
 
 export default function ForumPage({ onPostClick }) {

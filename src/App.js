@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import HomePage from './pages/HomePage';
 import PostPage from './pages/PostPage';
+import ForumPage from './pages/ForumPage';
 
 function App() {
   const [selectedPostId, setSelectedPostId] = useState(null);
@@ -18,7 +18,7 @@ function App() {
       {selectedPostId ? (
         <PostPage postId={selectedPostId} onBack={() => setSelectedPostId(null)} />
       ) : (
-        <HomePage onPostClick={setSelectedPostId} />
+        <ForumPage onPostClick={setSelectedPostId} />
       )}
     </div>
   );

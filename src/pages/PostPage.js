@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import PostComponent from '../components/Post';
+import PostComponent from '../components/forum/Post';
 import { fetchPostById, fetchAllCommentsByPost, createComment, createReply, votePost } from '../services/forumService';
 
 export default function PostPage({ postId, onBack }) {
