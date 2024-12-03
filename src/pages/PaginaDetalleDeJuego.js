@@ -27,6 +27,32 @@ const PaginaDetalleDeJuego = () => {
 
   const { user, isAuthenticated, isLoading } = useAuth0();
 
+
+  // Función para enviar el correo
+  const sendEmail = async (email, subject, content) => {
+    const emailData = {
+      to: email,  // El correo del destinatario
+      subject: subject,     // El asunto del correo
+      text: content,     // El contenido en texto del correo
+    };
+
+    try {
+      // Realizamos la solicitud POST con Axios
+      const response = await axios.post('https://renderbdspawn.onrender.com/api/send-email', emailData, {
+        headers: {
+          'Content-Type': 'application/json',  // Indicamos que el cuerpo de la solicitud es JSON
+        },
+      });
+
+      // Si la respuesta es exitosa, mostramos el mensaje
+      console.log('Correo enviado correctamente:', response.data);
+    } catch (error) {
+      // Si ocurre un error, mostramos el error
+      console.error('Error al enviar correo:', error.response ? error.response.data : error.message);
+    }
+  };
+
+
   useEffect(() => {
     
     const fetchGameDetails = async () => {
@@ -263,6 +289,12 @@ const PaginaDetalleDeJuego = () => {
         throw new Error("Error al publicar la review");
       }
 
+      if(user.email)
+      {
+        console.log("Se llega a enviar el correo");
+        sendEmail(user.email, "Creación de reseña", "Su nueva reseña se guardó con éxito");
+      }
+      
       const newReview = await response.json();
       setReviews([...reviews, newReview]);
       setNewReviewText("");
