@@ -2,12 +2,16 @@ import React from "react";
 import { MessageSquare, ArrowBigUp, Eye, Tag } from "lucide-react";
 import { formatTimeAgo } from "../../utils/dateUtils";
 
-export default function PostsList({ posts, onPostClick }) {
+export default function PostsList({ posts = [], onPostClick }) {
+  if (!Array.isArray(posts) || posts.length === 0) {
+    return <p>No posts available.</p>;
+  }
+
   return (
     <div className="space-y-4">
       {posts.map((post) => (
         <article
-          key={post._id}
+          key={post._id} // Asegurarse de que _id se usa como key
           className="bg-white rounded-lg shadow-sm border border-gray-200 hover:border-gray-300 transition-colors cursor-pointer"
           onClick={() => {
             console.log(`Post click: ${post._id}`);
@@ -57,9 +61,9 @@ export default function PostsList({ posts, onPostClick }) {
                   </div>
 
                   <div className="flex flex-wrap items-center gap-3">
-                    {post.tags.map((tag, index) => (
+                    {Array.isArray(post.tags) && post.tags.map((tag, index) => (
                       <span
-                        key={tag + index}
+                        key={`${post._id}-${index}`} // Asegurarse de que cada tag tenga un key único
                         className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 text-xs font-medium"
                       >
                         <Tag size={12} />
@@ -80,17 +84,17 @@ export default function PostsList({ posts, onPostClick }) {
                   }}
                 >
                   <MessageSquare />
-                  <span className="font-medium">{post.comments.length}</span>
+                  <span className="font-medium">{post.comments ? post.comments.length : 0}</span>
                 </div>
 
                 <div className="flex items-center gap-2 text-gray-500">
                   <ArrowBigUp size={24} />
-                  <span className="font-medium">{post.votes}</span>
+                  <span className="font-medium">{post.votes || 0}</span>
                 </div>
 
                 <div className="flex items-center gap-2 text-gray-500">
                   <Eye />
-                  <span className="font-medium">{post.views}</span>
+                  <span className="font-medium">{post.views || 0}</span>
                 </div>
               </div>
             </div>

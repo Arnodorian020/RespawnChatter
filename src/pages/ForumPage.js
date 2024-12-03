@@ -18,6 +18,7 @@ export default function ForumPage() {
         setPosts(data);
       } catch (error) {
         console.error('Error fetching posts:', error);
+        setPosts([]); // Asegurarse de que posts es siempre un array
       }
     };
 
@@ -29,8 +30,8 @@ export default function ForumPage() {
       const createdPost = await createPost(newPost);
       setPosts((prev) => [createdPost, ...prev]);
       setIsCreatingPost(false);
-      // Navegar a la URL con el nombre del usuario como parámetro
-      navigate(`/post/${createdPost._id}?username=${user.name}`);
+      // Navegar a la URL con el ID del post
+      navigate(`/post/${createdPost._id}?author=${user ? user.name : 'Anonymous'}`);
     } catch (error) {
       console.error('Error creating post:', error);
     }

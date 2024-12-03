@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
+import { useAuth0 } from '@auth0/auth0-react';
 
 export default function CreatePost({ onCreatePost, onClose }) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [tags, setTags] = useState('');
   const [error, setError] = useState('');
+  const { user } = useAuth0();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!title.trim() || !content.trim() || !tags.trim()) {
@@ -15,6 +17,7 @@ export default function CreatePost({ onCreatePost, onClose }) {
       return;
     }
 
+    // Convertir la cadena de tags en un array solo aquí
     const tagList = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
 
     if (tagList.length === 0) {
@@ -22,11 +25,20 @@ export default function CreatePost({ onCreatePost, onClose }) {
       return;
     }
 
-    onCreatePost({
+    const postData = {
       title: title.trim(),
       content: content.trim(),
-      tags: tagList
-    });
+      tags: tagList, // Envía como un array
+      author: user ? user.name : 'Anonymous',
+      authorAvatar: user ? user.picture : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' // Usa la imagen del usuario si está disponible
+    };
+
+    try {
+      await onCreatePost(postData);
+      console.log('Post created and author data sent to backend');
+    } catch (error) {
+      console.error('Error sending post data to backend:', error);
+    }
 
     onClose();
   };

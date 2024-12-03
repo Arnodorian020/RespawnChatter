@@ -74,18 +74,32 @@ async function votePost(postId, direction) {
   return response.json();
 }
 
-async function createPost(title, content, tags) {
+async function createPost(postData) {
+  const { title, content, tags, author, authorAvatar } = postData;
+
+  // Verifica que tags sea un array antes de proceder
+  if (!Array.isArray(tags)) {
+    console.error('tags:', tags);
+    throw new Error('Tags should be an array');
+  }
+
+  console.log('Data to send:', { title, content, tags, author, authorAvatar });
+
   const response = await fetch(`${API_URL}/posts`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ title, content, tags }),
+    body: JSON.stringify({ title, content, tags, author, authorAvatar }),
   });
+
   if (!response.ok) {
     throw new Error('Error al crear el post');
   }
+
   return response.json();
 }
 
 export { fetchPosts, fetchPostById, fetchAllCommentsByPost, createComment, createReply, votePost, createPost };
+
+
