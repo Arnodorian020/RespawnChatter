@@ -29,9 +29,9 @@ function App() {
       domain={domain}
       clientId={clientId}
       authorizationParams={{
+        audience: 'https://dev-cwnz3kxvoe0bpwc4.us.auth0.com/api/v2/',
         redirect_uri: window.location.origin
-      }}
-      cacheLocation='localstorage'
+      }}      cacheLocation='localstorage'
       useRefreshTokens={true}
     >
       <Router>

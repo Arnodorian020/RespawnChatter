@@ -13,6 +13,7 @@ const PaginaMisResenas = () => {
   const [modalData, setModalData] = useState({ show: false, reviewId: null, action: null });
   const navigate = useNavigate();
   const [userId, setUserId] = useState(null); // Para almacenar el ID del usuario
+  const [email, setEmail] = useState(null); // Para almacenar el email del usuario
 
 
   const { user, isAuthenticated, isLoading } = useAuth0();
@@ -27,6 +28,12 @@ const PaginaMisResenas = () => {
 
       try {
         
+        console.log('Este es el correo antes del llamado a API:', user.email);
+       
+        setEmail(user.email);
+
+        if(email)
+        {
         const userResponse = await fetch(`http://localhost:3000/users/${user.email}`);
         
         console.log(user.email);
@@ -38,11 +45,16 @@ const PaginaMisResenas = () => {
         console.log(user.email);
 
         const fetchedUser = await userResponse.json();
-        setUserId(fetchedUser._id);
-
-        console.log(userId);
         
-        const response = await fetch(`http://localhost:3000/reviews/user/${userId}`);
+        console.log(fetchedUser);
+        
+        setUserId(fetchedUser._id);
+        
+        console.log(userId);
+
+        if (userId) {
+        console.log('Este es el usuario encontrado', fetchedUser._id);
+        const response = await fetch(`http://localhost:3000/reviews/user/${fetchedUser._id}`);
 
         if (!response.ok) {
           throw new Error("Error al obtener las reseñas");
@@ -50,11 +62,12 @@ const PaginaMisResenas = () => {
 
         const data = await response.json();
         
-        console.log(data);
+        console.log('Estas son las reseñas que se traen:', data);
 
         setReviews(data);
         setOriginalReviews(data); // Guarda el orden original
-      
+        }
+      }
       } catch (error) {
         console.error("Error al llamar a la API:", error);
         setReviews([]);
@@ -68,7 +81,7 @@ const PaginaMisResenas = () => {
     if(isAuthenticated){
     fetchUserAndReviews();
     }
-  }, [userId, isLoading, isAuthenticated]);
+  }, [userId, isLoading, isAuthenticated, email]);
 
   const handleSortChange = (e) => {
     setSortBy(e.target.value);

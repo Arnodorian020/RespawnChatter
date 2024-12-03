@@ -14,6 +14,11 @@ const BarraDeNavegacion = () => {
                 <header className="main-header">
                     <nav>
                         <ul className="navbar-list">
+                            <img
+                                src={require("../assets/images/Respawn chatter.png")}
+                                alt="Respawn Chatter Logo"
+                                className="profile-logo"
+                            />
                             <li><Link to="/profile" className="navbar-item">Perfil</Link></li>
                             <li><Link to="/forum" className="navbar-item">Foro de discusión</Link></li>
                             <li><Link to="/" className="navbar-item">Emulador de Video Juegos</Link></li>

@@ -4,9 +4,10 @@ import { Link } from "react-router-dom";
 import { LogoutButton } from "../components/Auth/Logout";
 import axios from "axios";
 import "../styles/pages/ProfilePage.css";
+import { useEffect } from "react";
 
 const ProfilePage = () => {
-  const { user, isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
+  const { user, isAuthenticated, isLoading, getAccessTokenSilently, getIdTokenClaims } = useAuth0();
   
   // Estados para manejar la edición del perfil
   const [editing, setEditing] = useState(false);
@@ -16,10 +17,52 @@ const ProfilePage = () => {
   const [imageFile, setImageFile] = useState(null); // Archivo de imagen
   const [error, setError] = useState(""); // Manejo de errores
 
+  useEffect(() => {
+    console.log("user:", user);
+    console.log("isAuthenticated:", isAuthenticated);
+
+    const sendUserDataToBackend = async () => {
+      if (isAuthenticated && user) {
+        try {
+          const token = await getIdTokenClaims();
+
+          console.log("El token es: ", token);
+
+          const userData = {
+            email: user.email,
+            username: user.nickname,
+            createdAt: user.updated_at,  // O el campo que necesites
+          };
+
+          console.log("Este es el idToken:", token.__raw);
+
+          console.log("La data del usuario es:", userData);
+
+          await axios.get('http://localhost:3000/auth/profile', {
+            headers: {
+              Authorization: `Bearer ${token.__raw}`,
+            },
+            params: userData,
+          });
+
+          console.log("Datos del usuario enviados correctamente al backend");
+        } catch (error) {
+          console.error("Error al enviar los datos del usuario al backend", error);
+        }
+      }
+    };
+
+    // Ejecutamos el envío solo si está autenticado
+    if (isAuthenticated) {
+      sendUserDataToBackend();
+    }
+  }, [isAuthenticated, user, isLoading ,getIdTokenClaims]); // Dependencias
+  
+  
   if (isLoading) {
     return <div>Loading...</div>;
   }
-
+  
   // Función para manejar la carga de imágenes
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -85,27 +128,6 @@ const ProfilePage = () => {
   return (
     isAuthenticated && (
       <div className="profile-page">
-        {/* Header de navegación */}
-        <header className="main-header">
-          <nav>
-            <ul className="navbar-list">
-              <img
-                src={require("../assets/images/Respawn chatter.png")}
-                alt="Respawn Chatter Logo"
-                className="profile-logo"
-              />
-              <li><Link to="/profile" className="navbar-item">Perfil</Link></li>
-              <li><Link to="/forum" className="navbar-item">Foro</Link></li>
-              <li><Link to="/emulator" className="navbar-item">Emulador</Link></li>
-              <li><Link to="/news" className="navbar-item">Novedades</Link></li>
-              <li><Link to="/reviews" className="navbar-item">Reseñas</Link></li>
-            </ul>
-          </nav>
-          <div className="logout-button-container">
-            <LogoutButton />
-          </div>
-        </header>
-
         {/* Contenido del perfil */}
         <div className="profile-container">
           <div className="profile-avatar-container">

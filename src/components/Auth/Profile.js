@@ -6,7 +6,7 @@ import { useEffect } from "react";
 
 export const Profile = () => {
 
-    const { user, isAuthenticated, getIdTokenClaims } = useAuth0();
+    const { user, isAuthenticated, isLoading, getIdTokenClaims } = useAuth0();
     console.log(isAuthenticated);
   
     useEffect(() => {
@@ -46,7 +46,7 @@ export const Profile = () => {
       if (isAuthenticated) {
         sendUserDataToBackend();
       }
-    }, [isAuthenticated, user, getAccessTokenSilently]); // Dependencias
+    }, [isAuthenticated, user, isLoading ,getAccessTokenSilently]); // Dependencias
     
     
     

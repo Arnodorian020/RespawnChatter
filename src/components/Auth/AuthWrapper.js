@@ -13,7 +13,10 @@ const AuthWrapper = ({ children }) => {
     <Auth0Provider
       domain={domain}
       clientId={clientId}
-      authorizationParams={{ redirect_uri: window.location.origin }}
+      authorizationParams={{ 
+        audience: 'https://dev-cwnz3kxvoe0bpwc4.us.auth0.com/api/v2/',
+        redirect_uri: window.location.origin 
+      }}
       cacheLocation="localstorage"
       useRefreshTokens={true}
     >
