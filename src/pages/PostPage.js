@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // Importa useNavigate
+import { useParams, useNavigate } from 'react-router-dom';
 import PostComponent from '../components/forum/Post';
-import { fetchPostById, fetchAllCommentsByPost, createComment, createReply, votePost } from '../services/forumService';
+import { fetchPostById, fetchAllCommentsByPost, createReply, votePost, createComment } from '../services/forumService';
+import { useAuth0 } from "@auth0/auth0-react";
 
 export default function PostPage() {
-  const { postId } = useParams(); // Extrae el postId de los parámetros de la URL
-  const navigate = useNavigate(); // Usa useNavigate para la navegación
-  console.log('Post ID in PostPage component:', postId); // Log para verificar el valor del postId
+  const { postId } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth0();
+  console.log('Post ID in PostPage component:', postId);
 
   const [selectedPost, setSelectedPost] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!postId) {
@@ -22,6 +25,7 @@ export default function PostPage() {
         setSelectedPost({ ...post, comments });
       } catch (error) {
         console.error('Error fetching post details:', error);
+        setError(error.message);
       }
     };
 
@@ -30,19 +34,36 @@ export default function PostPage() {
 
   const addComment = async (content) => {
     try {
-      const newComment = await createComment(postId, content);
+      if (!content.trim()) {
+        setError('Comment cannot be empty');
+        return;
+      }
+
+      const commentData = {
+        author: user ? user.name : 'Anonymous',
+        content: content.trim(),
+      };
+
+      const newCommentResponse = await createComment(postId, commentData);
       setSelectedPost((prev) => ({
         ...prev,
-        comments: [...prev.comments, newComment],
+        comments: [...prev.comments, newCommentResponse],
       }));
+      setError(null);
     } catch (error) {
       console.error('Error adding comment:', error);
+      setError('Error adding comment');
     }
   };
 
   const addReply = async (commentId, content) => {
     try {
-      const newReply = await createReply(postId, commentId, content);
+      const replyData = {
+        author: user ? user.name : 'Anonymous',
+        content: content.trim(),
+      };
+
+      const newReply = await createReply(postId, commentId, replyData);
       setSelectedPost((prev) => ({
         ...prev,
         comments: prev.comments.map((comment) =>
@@ -53,6 +74,7 @@ export default function PostPage() {
       }));
     } catch (error) {
       console.error('Error adding reply:', error);
+      setError('Error adding reply');
     }
   };
 
@@ -65,12 +87,17 @@ export default function PostPage() {
       }));
     } catch (error) {
       console.error('Error voting post:', error);
+      setError('Error voting post');
     }
   };
 
   const handleBack = () => {
-    navigate('/forum'); // Navega de regreso a la página del foro
+    navigate('/forum');
   };
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
 
   if (!selectedPost) {
     return <div>Loading...</div>;
@@ -86,10 +113,10 @@ export default function PostPage() {
       </div>
       <PostComponent
         post={selectedPost}
+        user={user}
+        setPost={setSelectedPost}
+        fetchPostDetails={fetchPostById}
         onAddComment={addComment}
-        onVotePost={handleVotePost}
-        onVoteComment={(commentId, direction) => handleVotePost(commentId, direction)}
-        onAddReply={addReply}
       />
     </main>
   );
